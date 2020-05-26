@@ -434,11 +434,3 @@ class App {
   }
 }
 
-//app is global cuz. need to debug in console
-const app = new App();
-function main() {
-  redom.mount(document.body, app);
-}
-
-window.addEventListener('load', function(){setTimeout(main,0)}, false)
-

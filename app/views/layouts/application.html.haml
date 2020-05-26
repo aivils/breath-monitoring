@@ -11,4 +11,6 @@
     = stylesheet_link_tag 'https://unpkg.com/tachyons@4.10.0/css/tachyons.min.css'
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
   %body
+    = render 'layouts/header'
+    = render 'layouts/flash'
     = yield
