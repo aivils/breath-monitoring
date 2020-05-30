@@ -1,0 +1,16 @@
+.dt.dt--fixed
+  .dt-row
+    .dtc.tc.pv4
+      %h1 Measure
+  .dt-row
+    .dtc#video-container
+
+:javascript
+  //app is global cuz. need to debug in console
+  const app = new App('#{measurements_path}');
+  function main() {
+    redom.mount(document.getElementById('video-container'), app);
+  }
+
+  window.addEventListener('load', function(){setTimeout(main,0)}, false)
+
