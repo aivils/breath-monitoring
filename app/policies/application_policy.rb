@@ -1,4 +1,5 @@
 class ApplicationPolicy
+  include PolicyHelper
   attr_reader :user, :record
 
   def initialize(user, record)
@@ -7,15 +8,15 @@ class ApplicationPolicy
   end
 
   def index?
-    false
+    is_admin?
   end
 
   def show?
-    false
+    is_admin?
   end
 
   def create?
-    false
+    is_admin?
   end
 
   def new?
@@ -23,7 +24,7 @@ class ApplicationPolicy
   end
 
   def update?
-    false
+    is_admin?
   end
 
   def edit?
@@ -31,7 +32,7 @@ class ApplicationPolicy
   end
 
   def destroy?
-    false
+    is_admin?
   end
 
   class Scope
