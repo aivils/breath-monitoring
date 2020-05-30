@@ -54,27 +54,16 @@ const csrfToken = () => {
   return null;
 };
 
-function saveToServer(data, savePath) {
-  const mForm = document.createElement("form");
-  mForm.action = savePath;
-  mForm.method = "POST";
-  document.body.appendChild(mForm);
-
-  dataInput = document.createElement("input");
-  dataInput.type = "text";
-  dataInput.value = data;
-  dataInput.name = "measurement[data]";
-  authInput = document.createElement("input");
-  authInput.type = "text";
-  authInput.value = csrfToken();
-  authInput.name = "authenticity_token";
-  mForm.appendChild(dataInput);
-  mForm.appendChild(authInput);
-  mForm.submit();
-
-  setTimeout(function() {
-    document.body.removeChild(mForm);
-  }, 0);
+function saveToServer(data, savePath, callback) {
+  const formData = new FormData();
+  const file = new Blob([data], {type: 'plain/text'});
+  formData.append('measurement[data_file]', file, 'data.txt');
+  formData.append('authenticity_token', csrfToken());
+  fetch(savePath, {method: 'POST', body: formData})
+    .then(() => {
+      console.log('Uploaded')
+      callback();
+    });
 }
 
 class Overlay {
@@ -225,7 +214,8 @@ class VideoCap {
         onResize: this.overlayResize}),
       this.topBar = el('.absolute.self-start.sans-serif.f5.pa1.bg-blue.white', 
         [this.elStatus = el('span.pointer'),
-         this.elSave = el('span.pointer', {style:{display:'none'}}, 'Save')
+         this.elSave = el('span.pointer', {style:{display:'none'}}, 'Save'),
+         this.elSucess = el('span.pointer', {style:{display:'none'}}, 'Successfully uploaded')
       ]),
       el('#videoInput.absolute',[
         this.elFile = el('input', {type:'file', accept: 'video/*'}),
@@ -334,7 +324,13 @@ class VideoCap {
       /*saveToFile(this.fdata.join('\n'),
                  mkfname(Math.round(this.elVideo.currentTime), this.gsize+'-'),
                  'text/plain');*/
-      saveToServer(this.fdata.join('\n'), this.options.savePath);
+      saveToServer(this.fdata.join('\n'), this.options.savePath, () => {
+        this.elSave.style.display = 'none';
+        this.elSucess.style.display = 'block';
+        setTimeout(() => {
+          this.elSucess.style.display = 'none';
+        }, 5000);
+      });
     }
   }
   overlayResize = (evt) => {
