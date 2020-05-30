@@ -1,0 +1,28 @@
+<main class="pa4 black-80">
+<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+  <%= render "devise/shared/error_messages", resource: resource %>
+  <%= f.hidden_field :reset_password_token %>
+
+  <fieldset id="new_password" class="ba b--transparent ph0 mh0">
+    <legend class="f4 fw6 ph0 mh0">Change your password</legend>
+    <div class="mt3">
+      <%= f.label :password, "New password", class: "db fw6 lh-copy f6" %><br />
+      <% if @minimum_password_length %>
+        <em>(<%= @minimum_password_length %> characters minimum)</em><br />
+      <% end %>
+      <%= f.password_field :password, autofocus: true, autocomplete: "new-password", class: "b pa2 input-reset ba bg-transparent hover-bg-orange hover-white w-100" %>
+    </div>
+
+    <div class="mt3">
+      <%= f.label :password_confirmation, "Confirm new password", class: "db fw6 lh-copy f6" %><br />
+      <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "b pa2 input-reset ba bg-transparent hover-bg-orange hover-white w-100" %>
+    </div>
+  </fieldset>
+
+  <div class="">
+    <%= f.submit "Change my password", class: "b pa2 input-reset ba bg-transparent hover-bg-orange hover-white w-100" %>
+  </div>
+<% end %>
+
+<%= render "devise/shared/links" %>
+</main>

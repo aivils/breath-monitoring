@@ -1,0 +1,31 @@
+<main class="pa4 black-80">
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'measure center' }) do |f| %>
+  <%= render "devise/shared/error_messages", resource: resource %>
+
+    <fieldset id="sign_up" class="ba b--transparent ph0 mh0">
+      <legend class="f4 fw6 ph0 mh0">Sign Up</legend>
+      <div class="mt3">
+        <%= f.label :email, class: "db fw6 lh-copy f6" %><br />
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "b pa2 input-reset ba bg-transparent hover-bg-orange hover-white w-100" %>
+      </div>
+
+      <div class="mt3">
+        <%= f.label :password, class: "db fw6 lh-copy f6" %>
+        <% if @minimum_password_length %>
+        <em>(<%= @minimum_password_length %> characters minimum)</em>
+        <% end %><br />
+        <%= f.password_field :password, autocomplete: "new-password", class: "b pa2 input-reset ba bg-transparent hover-bg-orange hover-white w-100" %>
+      </div>
+
+      <div class="mt3">
+        <%= f.label :password_confirmation, class: "db fw6 lh-copy f6" %><br />
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "b pa2 input-reset ba bg-transparent hover-bg-orange hover-white w-100" %>
+      </div>
+    </fieldset>
+
+  <div class="">
+    <%= f.submit "Sign up", class: "b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" %>
+  </div>
+  <%= render "devise/shared/links" %>
+<% end %>
+</main>

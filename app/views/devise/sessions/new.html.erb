@@ -1,0 +1,30 @@
+<main class="pa4 black-80">
+<%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: 'measure center' }) do |f| %>
+    <fieldset id="sign_in" class="ba b--transparent ph0 mh0">
+      <legend class="f4 fw6 ph0 mh0">Sign In</legend>
+      <div class="mt3">
+        <%= f.label :email, class: "db fw6 lh-copy f6" %><br />
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "pa2 input-reset ba bg-transparent hover-bg-orange hover-white w-100" %>
+      </div>
+
+      <div class="mt3">
+        <%= f.label :password, class: "db fw6 lh-copy f6" %><br />
+        <%= f.password_field :password, autocomplete: "current-password", class: "b pa2 input-reset ba bg-transparent hover-bg-orange hover-white w-100" %>
+      </div>
+
+      <% if devise_mapping.rememberable? %>
+        <div class="mt3">
+          <%= f.label :remember_me, class: "pa0 ma0 lh-copy f6 pointer" %>
+          <%= f.check_box :remember_me %>
+        </div>
+      <% end %>
+    </fieldset>
+
+    <div class="">
+      <%= f.submit "Log in", class: "b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" %>
+    </div>
+    <%= render "devise/shared/links" %>
+<% end %>
+
+</main>
+

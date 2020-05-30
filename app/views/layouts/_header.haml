@@ -1,24 +1,14 @@
-%header.sans-serif
-  .cover.bg-left.bg-center-l
-    .bg-black-80.pb1.pb2-m.pb3-l
-      %nav.dt.w-100.mw8.center
-        .dtc.w2.v-mid.pa3
-          %a.dib.w2.h2.pa1.ba.b--white-90.grow-large.border-box{:href => "/"}
-            = render 'layouts/icon_breath'
-        .dtc.v-mid.tr.pa3
-          %a.f6.fw4.hover-white.no-underline.white-70.dn.dib-ns.pv2.ph3{:href => "/"} How it Works
-          %a.f6.fw4.hover-white.no-underline.white-70.dn.dib-ns.pv2.ph3{:href => "/"} Pricing
-          %a.f6.fw4.hover-white.no-underline.white-70.dn.dib-l.pv2.ph3{:href => "/"} About
-          %a.f6.fw4.hover-white.no-underline.white-70.dn.dib-l.pv2.ph3{:href => "/"} Careers
-          - if user_signed_in?
-            %a.f6.fw4.hover-white.no-underline.white-70.dib.ml2.pv2.ph3.ba{:href => new_measurement_path} Measure
+%nav.flex.justify-between.bb.b--white-10.bg-orange
+  %a.link.white-70.hover-white.no-underline.flex.items-center.pa3{:href => ""}
+    = render 'layouts/icon_breath'
 
-            %a.f6.fw4.hover-white.no-underline.white-70.dib.ml2.pv2.ph3.ba{:href => destroy_user_session_path, data: {method: :delete}} Sign Out
-          - else
-            %a.f6.fw4.hover-white.no-underline.white-70.dib.ml2.pv2.ph3{:href => new_user_registration_path} Sign Up
-            %a.f6.fw4.hover-white.no-underline.white-70.dib.ml2.pv2.ph3.ba{:href => new_user_session_path} Sign In
+  .flex-grow.pa3.flex.items-center
+    %a.f6.link.dib.white.dim.mr3.mr4-ns{:href => "#0"} About
+    - if user_signed_in?
+      %a.f6.link.dib.white.dim.mr3.mr4-ns{:href => new_measurement_path} Measure
+      %a.f6.link.dib.white.dim.mr3.mr4-ns{:href => edit_user_registration_path} Account
+      %a.f6.dib.white.bg-animate.hover-bg-white.hover-black.no-underline.pv2.ph4.br-pill.ba.b--white-20{:href => destroy_user_session_path, data: {method: :delete}} Sign Out
+    -else
+      %a.f6.link.dib.white.dim.mr3.mr4-ns{:href => new_user_registration_path} Sign Up
+      %a.f6.dib.white.bg-animate.hover-bg-white.hover-black.no-underline.pv2.ph4.br-pill.ba.b--white-20{:href => new_user_session_path} Sign In
 
-      - if !user_signed_in?
-        .tc-l.mt4.mt5-m.mt6-l.ph3
-          %h1.f2.f1-l.fw2.white-90.mb0.lh-title This is your super impressive headline
-          %h2.fw1.f3.white-80.mt3.mb4 Now a subheadline where explain your wonderful new startup even more
