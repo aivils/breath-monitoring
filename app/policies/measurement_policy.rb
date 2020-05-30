@@ -9,6 +9,10 @@ class MeasurementPolicy < ApplicationPolicy
     end
   end
 
+  def new?
+    is_user?
+  end
+
   def create?
     is_user?
   end

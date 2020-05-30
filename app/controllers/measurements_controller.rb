@@ -1,4 +1,9 @@
 class MeasurementsController < ApplicationController
+  def new
+    @measurement = resource_scope.new
+    authorize(@measurement)
+  end
+
   def create
     @measurement = resource_scope.new(create_params)
     authorize(@measurement)
