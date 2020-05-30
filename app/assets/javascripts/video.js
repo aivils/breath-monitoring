@@ -43,6 +43,40 @@ function saveToFile(data, fileName, type) {
   }, 0);
 }
 
+const csrfToken = () => {
+  if (typeof document != 'undefined') {
+    const metaTag = document.querySelector('meta[name=csrf-token]');
+    if (metaTag) {
+      return metaTag.getAttribute('content');
+    }
+  }
+
+  return null;
+};
+
+function saveToServer(data, savePath) {
+  const mForm = document.createElement("form");
+  mForm.action = savePath;
+  mForm.method = "POST";
+  document.body.appendChild(mForm);
+
+  dataInput = document.createElement("input");
+  dataInput.type = "text";
+  dataInput.value = data;
+  dataInput.name = "measurement[data]";
+  authInput = document.createElement("input");
+  authInput.type = "text";
+  authInput.value = csrfToken();
+  authInput.name = "authenticity_token";
+  mForm.appendChild(dataInput);
+  mForm.appendChild(authInput);
+  mForm.submit();
+
+  setTimeout(function() {
+    document.body.removeChild(mForm);
+  }, 0);
+}
+
 class Overlay {
   constructor(options) {
     //note: parent-position-should-be-relative-then child-absolute - makes child fixed relative to parent
@@ -297,9 +331,10 @@ class VideoCap {
   saveClick = (evt) => {
     //console.log('pndng.save');
     if (this.fdata && this.fdata.length > 0) {
-      saveToFile(this.fdata.join('\n'),
+      /*saveToFile(this.fdata.join('\n'),
                  mkfname(Math.round(this.elVideo.currentTime), this.gsize+'-'),
-                 'text/plain');
+                 'text/plain');*/
+      saveToServer(this.fdata.join('\n'), this.options.savePath);
     }
   }
   overlayResize = (evt) => {
@@ -404,7 +439,7 @@ class VideoCap {
 
 
 class App {
-  constructor() {
+  constructor(savePath) {
     if (navigator.mediaDevices && navigator.getUserMedia && window.MediaRecorder) {
 
       let urlParams = new URLSearchParams(window.location.search);
@@ -426,7 +461,7 @@ class App {
       gmax = ((gmax >= 0) && (gmax <= 255)) ? gmax : 126;
 
       this.el = el('#app.w-100.h-100.flex.justify-center.items-center',
-        this.videocap = new VideoCap({x:x, y:y, w:w, h:h, fps:fps, gmax:gmax})
+        this.videocap = new VideoCap({x:x, y:y, w:w, h:h, fps:fps, gmax:gmax, savePath:savePath})
       );
     } else {
       this.el = el('p.bg-yellow.w-100.h-100.flex.justify-center.items-center', 'Supported/Tested browsers are Google Chrome 79+');
