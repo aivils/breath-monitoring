@@ -1,0 +1,1 @@
+web: /usr/local/rvm/bin/rvm 2.6.5 do bundle exec puma
