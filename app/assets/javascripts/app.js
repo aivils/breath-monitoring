@@ -12,7 +12,7 @@ window.BreathMonit = (function() {
       {
         drawPoints: true,
         showRoller: true,
-        valueRange: [0.0, 10000.0],
+        valueRange: [0.0, 6000.0],
         labels: ['Time', 'Breath']
       });
   };
