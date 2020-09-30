@@ -1,6 +1,13 @@
 .dt.dt--fixed
   .dt-row
     .dtc.tc.pv4
-      %h1 Home
+      %h1
+        - if current_user&.admin?
+          = 'Live data'
+        - else
+          = 'Home'
+  .dt-row
+    .dtc#live-data
 
-
+:javascript
+  BreathMonit.initGraph();

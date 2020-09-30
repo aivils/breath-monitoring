@@ -423,6 +423,7 @@ class VideoCap {
         this.fdata.push(now + ' ' + gcount);
         this.updateGraph(gcount/this.gsize); //% of overlaypixels
         this.elStatus.innerText = hhmmss(Math.round(this.elVideo.currentTime));
+        BreathMonit.send({frameTime: now, count: gcount});
       }
 
     //} else {
