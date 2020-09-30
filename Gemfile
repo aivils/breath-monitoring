@@ -13,6 +13,7 @@ gem 'haml-rails', '~> 2.0'
 gem 'devise'
 gem 'pundit'
 gem 'activeadmin'
+gem 'redis'
 
 gem 'foreman', '0.87.1', require: false
 
