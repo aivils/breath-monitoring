@@ -9,5 +9,6 @@
   .dt-row
     .dtc#live-data
 
-:javascript
-  BreathMonit.initGraph();
+- if current_user&.admin?
+  :javascript
+    BreathMonit.initGraph();
