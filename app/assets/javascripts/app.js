@@ -4,6 +4,7 @@ window.BreathMonit = (function() {
   var graphData = [
     [new Date(), 5000]
   ];
+  var graphDataFirstTime = true;
   var graph;
 
   var initGraph = function() {
@@ -23,6 +24,10 @@ window.BreathMonit = (function() {
       { channel: "MeasurementChannel", room: "1" },
       {
         received: function (data) {
+          if (graphDataFirstTime) {
+            graphDataFirstTime = false;
+            graphData = [];
+          }
           graphData.push([new Date(data.measurement.frameTime), data.measurement.count]);
           if (graph) {
             graph.updateOptions( { 'file': graphData } );
