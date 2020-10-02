@@ -287,6 +287,13 @@ class VideoCap {
   videoLoadedMetaData = (evt) => {
     //console.log('videoLoadedMetaData');
     //this.elVideo.controls = true;
+    document.getElementById("measure-title").style.display = 'none';
+    //this.elVideo.style.width = '100%';
+    //this.elVideo.style.height = 'auto';
+    const offsetLeft = this.elVideo.clientWidth/2 - this.options.w/2;
+    const offsetTop = this.elVideo.clientHeight/2 - this.options.h/2;
+    this.elOverlay.el.style.left = offsetLeft + 'px';
+    this.elOverlay.el.style.top = offsetTop + 'px';
     this.elVideo.style.display = 'block';
     this.elOverlayCanvas.style.display = 'block';
     this.elOverlay.el.style.display = 'block';
