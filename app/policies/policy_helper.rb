@@ -4,7 +4,7 @@ module PolicyHelper
   end
 
   def is_admin?
-    user&.admin?
+    @is_admin ||= user&.is_admin?
   end
 end
 

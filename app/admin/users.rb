@@ -7,7 +7,7 @@ ActiveAdmin.register User do
     column :email
     #column :current_sign_in_at
     #column :sign_in_count
-    column :admin
+    column :roles
     column :created_at
     actions
   end
@@ -22,9 +22,18 @@ ActiveAdmin.register User do
       f.input :email
       f.input :password
       f.input :password_confirmation
-      f.input :admin
+      f.input :roles, as: :check_boxes
     end
     f.actions
   end
 
+  show do
+    attributes_table do
+      row :email
+      row :roles
+    end
+    active_admin_comments
+  end
+
+  permit_params :email, :password, :password_confirmation, role_ids: []
 end
