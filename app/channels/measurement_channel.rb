@@ -1,10 +1,12 @@
 class MeasurementChannel < ApplicationCable::Channel
   def receive(data)
-    ActionCable.server.broadcast("measurement_channel_1", data)
+    user = User.find(data["user_id"])
+    MeasurementChannel.broadcast_to(user, data)
   end
 
   def subscribed
-    stream_from "measurement_channel_1"
+    user = User.find(params[:user_id])
+    stream_for user
   end
 
   def unsubscribed

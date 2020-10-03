@@ -10,6 +10,13 @@ class MeasurementsController < ApplicationController
     @measurement.save
   end
 
+  def presence
+    @measurement = resource_scope.new
+    authorize(@measurement)
+    current_user.update_column(:last_seen_at, DateTime.now)
+    head :ok
+  end
+
   private
 
   def create_params

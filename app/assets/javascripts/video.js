@@ -443,7 +443,7 @@ class VideoCap {
 
 
 class App {
-  constructor(savePath) {
+  constructor(options) {
     if (navigator.mediaDevices && navigator.getUserMedia && window.MediaRecorder) {
 
       let urlParams = new URLSearchParams(window.location.search);
@@ -465,7 +465,7 @@ class App {
       gmax = ((gmax >= 0) && (gmax <= 255)) ? gmax : 126;
 
       this.el = el('#app.w-100.h-100.flex.justify-center.items-center',
-        this.videocap = new VideoCap({x:x, y:y, w:w, h:h, fps:fps, gmax:gmax, savePath:savePath})
+        this.videocap = new VideoCap({x:x, y:y, w:w, h:h, fps:fps, gmax:gmax, savePath: options.savePath})
       );
     } else {
       this.el = el('p.bg-yellow.w-100.h-100.flex.justify-center.items-center', 'Supported/Tested browsers are Google Chrome 79+');

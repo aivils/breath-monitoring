@@ -7,6 +7,8 @@ class User < ApplicationRecord
   has_many :measurements
   has_and_belongs_to_many :roles
 
+  scope :online, -> { where('last_seen_at > ?', 30.seconds.ago) }
+
   def is_admin?
     roles.admin.any?
   end

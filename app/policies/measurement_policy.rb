@@ -16,4 +16,8 @@ class MeasurementPolicy < ApplicationPolicy
   def create?
     is_user?
   end
+
+  def presence?
+    is_user?
+  end
 end

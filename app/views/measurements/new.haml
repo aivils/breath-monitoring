@@ -7,10 +7,12 @@
 
 :javascript
   //app is global cuz. need to debug in console
-  const app = new App('#{measurements_path}');
+  const app = new App({savePath: '#{measurements_path}'});
   function main() {
     redom.mount(document.getElementById('video-container'), app);
   }
 
-  window.addEventListener('load', function(){setTimeout(main,0)}, false)
+  window.addEventListener('load', function(){setTimeout(main,0)}, false);
+
+  BreathMonit.init({user_id: #{current_user.id}, presence_path: '#{presence_measurements_path}'});
 

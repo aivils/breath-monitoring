@@ -10,5 +10,5 @@
     .dtc#live-data
 
 - if current_user&.admin?
-  :javascript
-    BreathMonit.initGraph();
+  = render 'users_present', users_present: @users_present
+

@@ -3,5 +3,6 @@ class HomeController < ApplicationController
 
   def index
     authorize :home
+    @users_present = User.online
   end
 end
