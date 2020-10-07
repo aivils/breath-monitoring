@@ -13,6 +13,13 @@ ActiveAdmin.register Measurement do
     actions
   end
 
+  filter :user, collection: -> {
+    User.all.map { |user| [user.email, user.id] }
+  }
+  filter :approved
+  filter :processed
+  filter :created_at
+
   show do
     attributes_table do
       row :id
