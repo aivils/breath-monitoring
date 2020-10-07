@@ -1,6 +1,7 @@
 <main class="pa4 black-80">
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'measure center' }) do |f| %>
   <%= render "devise/shared/error_messages", resource: resource %>
+  <%= recaptcha_tags %>
 
     <fieldset id="sign_up" class="ba b--transparent ph0 mh0">
       <legend class="f4 fw6 ph0 mh0">Sign Up</legend>

@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
-  devise_for :users # , ActiveAdmin::Devise.config
+  devise_for :users, controllers: {
+    registrations: 'users/registrations',
+    sessions: 'users/sessions',
+    passwords: 'users/passwords',
+  }
+  # , ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
   root to: 'home#index'
   get 'home/index'

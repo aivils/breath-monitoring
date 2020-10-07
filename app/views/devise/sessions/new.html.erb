@@ -1,5 +1,6 @@
 <main class="pa4 black-80">
 <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: 'measure center' }) do |f| %>
+  <%= recaptcha_tags %>
     <fieldset id="sign_in" class="ba b--transparent ph0 mh0">
       <legend class="f4 fw6 ph0 mh0">Sign In</legend>
       <div class="mt3">
