@@ -234,6 +234,8 @@ class VideoCap {
     this.elVideo.addEventListener('ended',this.videoEnded,false);
     this.elSave.addEventListener('click',this.saveClick,false);
     this.elFile.addEventListener('change', this.fileChange, false);
+    this.videoPauseButton = document.getElementById("video-pause-button");
+    this.videoPauseButton.addEventListener('click', this.forcePause);
   }
   onmount() {
     //console.log('VideoCap.onmount');
@@ -438,6 +440,10 @@ class VideoCap {
     }
     //repeat until videoPause or videoEnded
     this.rafID = requestAnimationFrame(this.onFrame.bind(this));
+  }
+
+  forcePause = (evt) => {
+    this.elVideo.pause();
   }
 }
 
