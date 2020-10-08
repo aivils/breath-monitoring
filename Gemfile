@@ -15,6 +15,7 @@ gem 'pundit'
 gem 'activeadmin'
 gem 'redis'
 gem 'recaptcha'
+gem 'dotenv-rails'
 
 gem 'foreman', '0.87.1', require: false
 
