@@ -1,45 +1,86 @@
+/*jshint esversion: 6 */
 window.BreathMonit = (function() {
   var cable;
   var measurementChannel;
   var graphData = [
-    [new Date(), 5000]
+    [new Date(), 0]
   ];
   var graphDataFirstTime = true;
   var graph;
   var user_id;
+  var receiveStopped = false;
 
   var initGraph = function() {
-    graph = new Dygraph(document.getElementById("live-data"),
+    graph = new Dygraph(document.getElementById("live-graph"),
       graphData,
       {
         drawPoints: true,
         showRoller: true,
-        valueRange: [0.0, 6000.0],
-        labels: ['Time', 'Breath']
+        valueRange: [0.0, 1.0],
+        labels: ['Time', 'Breath'],
+        showRangeSelector: true,
+        legend: 'always'
       });
   };
 
-  var init = function(options) {
+  var initStopButton = function () {
+    var el = document.getElementById("stop-button");
+    el.addEventListener('click', function() {
+      var stopped = el.getAttribute('data-stopped');
+      if (stopped == 'true') {
+        el.setAttribute('data-stopped', 'false');
+        el.innerText = 'Stop';
+        graphData = [];
+        receiveStopped = false;
+      } else {
+        el.setAttribute('data-stopped', 'true');
+        el.innerText = 'Start';
+        receiveStopped = true;
+      }
+    });
+  };
+
+  var initDownloadButton = function () {
+    var el = document.getElementById("download-button");
+    el.addEventListener('click', function() {
+      var fileName = 'breath-monit-' + new Date().toISOString().substring(0,19).replace(/:/g, '-') + '.csv';
+      var headers = "Timestamp, Value\n";
+      var data = graphData.map((x) =>  x[0].toISOString() + ',' + x[1]).join("\n");
+      saveToFile(headers + data, fileName, 'text/plain');
+    });
+  };
+
+  var initReceiver = function(options) {
     user_id = options.user_id;
     cable = ActionCable.createConsumer();
     measurementChannel = cable.subscriptions.create(
-      { channel: "MeasurementChannel", user_id: user_id },
+      { channel: "MeasurementChannel", id: user_id },
       {
         received: function (data) {
+          if (receiveStopped) return;
           if (graph) {
             if (graphDataFirstTime) {
               graphDataFirstTime = false;
               graphData = [];
             }
-            graphData.push([new Date(data.measurement.frameTime), data.measurement.count]);
+            graphData.push([new Date(data.m.t), data.m.c]);
             graph.updateOptions( { 'file': graphData } );
           }
         }
       }
     );
-    if (options.graph) {
-      initGraph();
-    }
+    initGraph();
+    initStopButton();
+    initDownloadButton();
+  };
+
+  var initSender = function(options) {
+    user_id = options.user_id;
+    cable = ActionCable.createConsumer();
+    measurementChannel = cable.subscriptions.create(
+      { channel: "MeasurementChannel", id: user_id },
+      {}
+    );
     if (options.presence_path) {
       var update_presence = function() {
         fetch(options.presence_path,
@@ -51,21 +92,21 @@ window.BreathMonit = (function() {
       // run it every 30 seconds
       setInterval(update_presence, 30000);
     }
-   };
+  };
 
   var send = function(data) {
-    measurementChannel.send({ user_id: user_id, measurement: data });
+    measurementChannel.send({ id: user_id, m: data });
   };
 
   var watch = function(options) {
     document.getElementById("users-present-table").style.display = 'none';
-    init({user_id: options.user_id, graph: true});
+    document.getElementById("live-data").style.display = 'block';
+    initReceiver({user_id: options.user_id});
   };
 
   return {
-    init: init,
+    initSender: initSender,
     send: send,
-    initGraph: initGraph,
     watch: watch,
   };
 })();

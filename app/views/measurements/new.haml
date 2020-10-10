@@ -16,5 +16,5 @@
 
   window.addEventListener('load', function(){setTimeout(main,0)}, false);
 
-  BreathMonit.init({user_id: #{current_user.id}, presence_path: '#{presence_measurements_path}'});
+  BreathMonit.initSender({user_id: #{current_user.id}, presence_path: '#{presence_measurements_path}'});
 

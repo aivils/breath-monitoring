@@ -1,14 +1,17 @@
-.dt.dt--fixed
-  .dt-row
-    .dtc.tc.pv4
-      %h1
-        - if current_user&.admin?
-          = 'Live data'
-        - else
-          = 'Home'
-  .dt-row
-    .dtc#live-data
+.fl.w-100.tc.pv4
+  %h1
+    - if policy(:livedata).show?
+      = 'Live data'
+    - else
+      = 'Home'
 
-- if current_user&.admin?
+- if policy(:livedata).show?
   = render 'users_present', users_present: @users_present
+
+  #live-data.fl.w-100{style: "display: none;"}
+    .fl.w-100
+      #live-graph.w-90.pa2{style: "height: 400px;"}
+    .fl.w-100.pa4.tc
+      %a#stop-button.f6.link.dim.br3.ph3.pv2.mb2.dib.white.bg-orange{href: "#0"} Stop
+      %a#download-button.f6.link.dim.br3.ph3.pv2.mb2.dib.white.bg-orange{href: "#0"} Download
 

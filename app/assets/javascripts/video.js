@@ -428,11 +428,12 @@ class VideoCap {
       let now = new Date().getTime();
       //fps is for graph updata only
       if ((now - this.lastFrameTime) >= this.frameInterval) {
+        const normalized = Math.round(gcount/this.gsize * 100000) / 100000;
         this.lastFrameTime = now;
-        this.fdata.push(now + ' ' + gcount);
-        this.updateGraph(gcount/this.gsize); //% of overlaypixels
+        this.fdata.push(now + ' ' + normalized);
+        this.updateGraph(normalized); //% of overlaypixels
         this.elStatus.innerText = hhmmss(Math.round(this.elVideo.currentTime));
-        BreathMonit.send({frameTime: now, count: gcount});
+        BreathMonit.send({t: now, c: normalized});
       }
 
     //} else {
