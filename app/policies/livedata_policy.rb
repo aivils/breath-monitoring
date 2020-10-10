@@ -6,10 +6,14 @@ class LivedataPolicy < Struct.new(:user, :home)
     end
 
     def resolve
-      if user.is_admin?
-        scope.all
+      if user
+        if user.is_admin?
+          scope.all
+        else
+          scope.where(id: user.patient_ids)
+        end
       else
-        scope.where(id: user.patient_ids)
+        scope.none
       end
     end
 
