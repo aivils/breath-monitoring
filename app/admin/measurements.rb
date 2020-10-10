@@ -26,6 +26,9 @@ ActiveAdmin.register Measurement do
       row :user
       row :approved
       row :processed
+      row :graph do |record|
+        render 'admin/measurements/graph', { measurement: record }
+      end
       row :data do |record|
         record.data.gsub("\n", '</br>').html_safe
       end

@@ -4,6 +4,9 @@ Rails.application.routes.draw do
     sessions: 'users/sessions',
     passwords: 'users/passwords',
   }
+  devise_scope :user do
+    get '/users/sign_out' => 'devise/sessions#destroy'
+  end
   # , ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
   root to: 'home#index'

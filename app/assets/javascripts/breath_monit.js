@@ -45,7 +45,7 @@ window.BreathMonit = (function() {
     el.addEventListener('click', function() {
       var fileName = 'breath-monit-' + new Date().toISOString().substring(0,19).replace(/:/g, '-') + '.csv';
       var headers = "Timestamp, Value\n";
-      var data = graphData.map((x) =>  x[0].toISOString() + ',' + x[1]).join("\n");
+      var data = graphData.map((x) =>  x[0].getTime() + ',' + x[1]).join("\n");
       saveToFile(headers + data, fileName, 'text/plain');
     });
   };

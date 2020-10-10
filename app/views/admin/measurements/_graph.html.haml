@@ -1,0 +1,6 @@
+= javascript_include_tag 'admin/graph'
+#graph{style: "width: 100%"}
+%div
+  %input#download-button(type="button" value="Download")
+:javascript
+  AdminGraph.init('#{j measurement.data}');
