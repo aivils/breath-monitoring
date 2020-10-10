@@ -1,18 +1,18 @@
 class MeasurementsController < ApplicationController
   def new
+    authorize(:measurement)
     @measurement = resource_scope.new
-    authorize(@measurement)
   end
 
   def create
+    authorize(:measurement)
     @measurement = resource_scope.new(create_params)
-    authorize(@measurement)
     @measurement.save
   end
 
   def presence
+    authorize(:measurement)
     @measurement = resource_scope.new
-    authorize(@measurement)
     current_user.update_column(:last_seen_at, DateTime.now)
     head :ok
   end
