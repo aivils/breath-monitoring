@@ -3,6 +3,6 @@ class HomeController < ApplicationController
 
   def index
     authorize :home
-    @users_present = User.online
+    @users_present = policy_scope(User.online, policy_scope_class: LivedataPolicy::Scope)
   end
 end
