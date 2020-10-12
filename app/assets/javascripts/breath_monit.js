@@ -16,7 +16,6 @@ window.BreathMonit = (function() {
       {
         drawPoints: true,
         showRoller: true,
-        valueRange: [0.0, 1.0],
         labels: ['Time', 'Breath'],
         showRangeSelector: true,
         legend: 'always'
