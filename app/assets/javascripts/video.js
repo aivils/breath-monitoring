@@ -428,7 +428,7 @@ class VideoCap {
       let now = new Date().getTime();
       //fps is for graph updata only
       if ((now - this.lastFrameTime) >= this.frameInterval) {
-        const normalized = Math.round(gcount/this.gsize * 100000) / 100000;
+        const normalized = 1 - Math.round(gcount/this.gsize * 100000) / 100000;
         this.lastFrameTime = now;
         this.fdata.push(now + ' ' + normalized);
         this.updateGraph(normalized); //% of overlaypixels
