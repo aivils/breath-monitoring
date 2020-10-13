@@ -212,10 +212,11 @@ class VideoCap {
         h:this.options.h,
         onMove: this.overlayMove,
         onResize: this.overlayResize}),
-      this.topBar = el('.absolute.self-start.sans-serif.f5.pa1.bg-blue.white', 
-        [this.elStatus = el('span.pointer'),
-         this.elSave = el('span.pointer', {style:{display:'none'}}, 'Save'),
-         this.elSucess = el('span.pointer', {style:{display:'none'}}, 'Successfully uploaded')
+      this.topBar = el('.absolute.self-start.sans-serif.f5.pa1.bg-orange.white', {style:{display:'none'}},
+        [this.elStatus = el('span.pointer.ba'),
+         this.elPause = el('span.pointer.ba.ml2', {style:{display:'none'}}, 'Pause'),
+         this.elSave = el('span.pointer.ba', {style:{display:'none'}}, 'Save'),
+         this.elSucess = el('span.pointer.ba', {style:{display:'none'}}, 'Successfully uploaded')
       ]),
       el('#videoInput.absolute',[
         this.elFile = el('input', {type:'file', accept: 'video/*'}),
@@ -234,8 +235,7 @@ class VideoCap {
     this.elVideo.addEventListener('ended',this.videoEnded,false);
     this.elSave.addEventListener('click',this.saveClick,false);
     this.elFile.addEventListener('change', this.fileChange, false);
-    this.videoPauseButton = document.getElementById("video-pause-button");
-    this.videoPauseButton.addEventListener('click', this.forcePause);
+    this.elPause.addEventListener('click', this.togglePause);
   }
   onmount() {
     //console.log('VideoCap.onmount');
@@ -290,16 +290,20 @@ class VideoCap {
     //console.log('videoLoadedMetaData');
     //this.elVideo.controls = true;
     document.getElementById("measure-title").style.display = 'none';
-    //this.elVideo.style.width = '100%';
-    //this.elVideo.style.height = 'auto';
-    const offsetLeft = this.elVideo.clientWidth/2 - this.options.w/2;
-    const offsetTop = this.elVideo.clientHeight/2 - this.options.h/2;
+    this.elVideo.style.width = '100%';
+    // this.elVideo.style.height = 'auto';
+    this.videoScaleX = this.elVideo.clientWidth / this.elVideo.videoWidth;
+    this.videoScaleY = this.elVideo.clientHeight / this.elVideo.videoHeight;
+    const offsetLeft = Math.floor(this.elVideo.clientWidth/2 - this.options.w/2);
+    const offsetTop = Math.floor(this.elVideo.clientHeight/2 - this.options.h/2);
     this.elOverlay.el.style.left = offsetLeft + 'px';
     this.elOverlay.el.style.top = offsetTop + 'px';
     this.elVideo.style.display = 'block';
     this.elOverlayCanvas.style.display = 'block';
     this.elOverlay.el.style.display = 'block';
     this.elGraph.style.display = 'block';
+    this.topBar.style.display = 'initial';
+    this.elPause.style.display = 'initial';
     //cant do this in mount as display is none
     this.overlayX = this.elOverlay.el.offsetLeft;
     this.overlayY = this.elOverlay.el.offsetTop;
@@ -395,8 +399,8 @@ class VideoCap {
       const ctxOverlay = this.elOverlayCanvas.getContext('2d');
       // Draw selected area of video to OffScreenCanvas
       ctxOverlay.drawImage(this.elVideo,
-        this.overlayX, this.overlayY,
-        this.elOverlayCanvas.width, this.elOverlayCanvas.height,
+        this.overlayX / this.videoScaleX, this.overlayY / this.videoScaleY,
+        this.elOverlayCanvas.width / this.videoScaleX, this.elOverlayCanvas.height / this.videoScaleY,
         0, 0,
         this.elOverlayCanvas.width, this.elOverlayCanvas.height);
 
@@ -443,8 +447,16 @@ class VideoCap {
     this.rafID = requestAnimationFrame(this.onFrame.bind(this));
   }
 
-  forcePause = (evt) => {
-    this.elVideo.pause();
+  togglePause = (evt) => {
+    let el = evt.target;
+    let text = el.textContent;
+    if (text == 'Pause') {
+      el.textContent = 'Start';
+      this.elVideo.pause();
+    } else {
+      el.textContent = 'Pause';
+      this.elVideo.play();
+    }
   }
 }
 
