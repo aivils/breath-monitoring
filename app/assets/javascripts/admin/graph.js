@@ -5,7 +5,7 @@ window.AdminGraph = (function() {
     var graph;
     graphData = rawGraphData.split("\n").map((x) => x.split(" "));
 
-    graphData = graphData.map((y) => [new Date(parseInt(y[0])), parseFloat(y[1])]);
+    graphData = graphData.map((y) => [parseFloat(y[0]), parseFloat(y[1])]);
 
     graph = new Dygraph(document.getElementById("graph"),
       graphData,
