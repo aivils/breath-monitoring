@@ -474,7 +474,7 @@ class App {
       let urlParams = new URLSearchParams(window.location.search);
       let x = parseInt(urlParams.get('x') || '0') || 0;
       let y = parseInt(urlParams.get('y') || '0') || 0;
-      let w = parseInt(urlParams.get('w') || '75') || 75;
+      let w = parseInt(urlParams.get('w') || '10') || 10;
       let h = parseInt(urlParams.get('h') || '75') || 75;
       if (x < 0) { x = 0 };
       if (y < 0) { y = 0 };
