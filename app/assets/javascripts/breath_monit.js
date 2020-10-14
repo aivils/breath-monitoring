@@ -2,13 +2,22 @@
 window.BreathMonit = (function() {
   var cable;
   var measurementChannel;
-  var graphData = [
-    [new Date(), 0]
-  ];
+  var DISPLAY_TIME_GAP = 120; /* seconds */
+  var ITEM_PER_SECOND = 15;
+  var PREFILLED_COUNT = DISPLAY_TIME_GAP * ITEM_PER_SECOND;
+  var graphData = [];
   var graphDataFirstTime = true;
   var graph;
   var user_id;
   var receiveStopped = false;
+
+  var fillGraphData = function() {
+    var nowDate = new Date();
+    graphData = [];
+    for (var index = 0; index < PREFILLED_COUNT; index++) {
+      graphData.push([new Date(nowDate.getTime() - ((PREFILLED_COUNT - index) * 1000)/ITEM_PER_SECOND), 0]);
+    }
+  };
 
   var initGraph = function() {
     graph = new Dygraph(document.getElementById("live-graph"),
@@ -29,7 +38,7 @@ window.BreathMonit = (function() {
       if (stopped == 'true') {
         el.setAttribute('data-stopped', 'false');
         el.innerText = 'Stop';
-        graphData = [];
+        fillGraphData();
         receiveStopped = false;
       } else {
         el.setAttribute('data-stopped', 'true');
@@ -60,9 +69,10 @@ window.BreathMonit = (function() {
           if (graph) {
             if (graphDataFirstTime) {
               graphDataFirstTime = false;
-              graphData = [];
+              fillGraphData();
             }
             graphData.push([new Date(data.m.t), data.m.c]);
+            graphData.shift();
             graph.updateOptions( { 'file': graphData } );
           }
         }
