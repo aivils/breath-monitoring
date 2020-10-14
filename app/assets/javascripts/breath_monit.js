@@ -12,14 +12,14 @@ window.BreathMonit = (function() {
   var receiveStopped = false;
 
   var fillGraphData = function() {
-    var nowDate = new Date();
     graphData = [];
     for (var index = 0; index < PREFILLED_COUNT; index++) {
-      graphData.push([new Date(nowDate.getTime() - ((PREFILLED_COUNT - index) * 1000)/ITEM_PER_SECOND), 0]);
+      graphData.push([index/ITEM_PER_SECOND - DISPLAY_TIME_GAP, 0]);
     }
   };
 
   var initGraph = function() {
+    fillGraphData();
     graph = new Dygraph(document.getElementById("live-graph"),
       graphData,
       {
@@ -69,9 +69,8 @@ window.BreathMonit = (function() {
           if (graph) {
             if (graphDataFirstTime) {
               graphDataFirstTime = false;
-              fillGraphData();
             }
-            graphData.push([new Date(data.m.t), data.m.c]);
+            graphData.push([data.m.t, data.m.c]);
             graphData.shift();
             graph.updateOptions( { 'file': graphData } );
           }

@@ -223,6 +223,7 @@ class VideoCap {
         this.elSelectVideoDevice = el('select', {style:{display:'none'}})
       ])
     ]);
+    this.firstVideoTime = null;
     this.lastVideoTime = 0;
     this.lastFrameTime = 0;
     this.frameInterval = Math.round(1000 / this.options.fps);
@@ -314,6 +315,7 @@ class VideoCap {
   videoPlay = (evt) => {
     //this.elStatus.innerText = 'Capturing...';
     this.elSave.style.display = 'none';
+    this.firstVideoTime = null;
     this.lastVideoTime = 0;
     this.lastFrameTime = 0;
     this.fdata = [];
@@ -430,14 +432,18 @@ class VideoCap {
       ctxOverlay.putImageData(rgba, 0, 0);
 
       let now = new Date().getTime();
+      if (!this.firstVideoTime) {
+        this.firstVideoTime = now;
+      }
       //fps is for graph updata only
       if ((now - this.lastFrameTime) >= this.frameInterval) {
         const normalized = 1 - Math.round(gcount/this.gsize * 100000) / 100000;
         this.lastFrameTime = now;
-        this.fdata.push(now + ' ' + normalized);
+        const elapsedTime = (now - this.firstVideoTime) / 1000 /* seconds */
+        this.fdata.push(elapsedTime + ' ' + normalized);
         this.updateGraph(normalized); //% of overlaypixels
-        this.elStatus.innerText = hhmmss(Math.round(this.elVideo.currentTime));
-        BreathMonit.send({t: now, c: normalized});
+        this.elStatus.innerText = hhmmss(Math.round(elapsedTime));
+        BreathMonit.send({t: elapsedTime, c: normalized});
       }
 
     //} else {
