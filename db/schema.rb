@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_12_162134) do
+ActiveRecord::Schema.define(version: 2020_10_19_145802) do
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "namespace"
@@ -58,6 +58,14 @@ ActiveRecord::Schema.define(version: 2020_10_12_162134) do
     t.bigint "user_id", null: false
     t.index ["role_id", "user_id"], name: "index_roles_users_on_role_id_and_user_id"
     t.index ["user_id", "role_id"], name: "index_roles_users_on_user_id_and_role_id"
+  end
+
+  create_table "user_profiles", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "display_time", default: 30
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_user_profiles_on_user_id"
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|

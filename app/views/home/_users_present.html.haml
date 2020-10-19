@@ -8,6 +8,7 @@
           %th.fw6.bb.b--black-20.tl.pb3.pr3.bg-white ID
           %th.fw6.bb.b--black-20.tl.pb3.pr3.bg-white Email
           %th.fw6.bb.b--black-20.tl.pb3.pr3.bg-white Last seen
+          %th.fw6.bb.b--black-20.tl.pb3.pr3.bg-white Display time
           %th.fw6.bb.b--black-20.tl.pb3.pr3.bg-white
       %tbody.lh-copy
         - users_present.each do |user|
@@ -15,6 +16,10 @@
             %td.pv3.pr3.bb.b--black-20= user.id
             %td.pv3.pr3.bb.b--black-20= user.email
             %td.pv3.pr3.bb.b--black-20= l(user.last_seen_at, format: '%H:%M:%S %d-%b-%Y')
+            %td.pv3.pr3.bb.b--black-20
+              = select_tag :display_time,
+                options_for_select(User::Profile::DISPLAY_TIMES, user.profile.display_time),
+                id: "user_display_time_#{user.id}"
             %td.pv3.pr3.bb.b--black-20
               = link_to 'Watch', 'javascript:void(0);', onclick: "BreathMonit.watch({user_id: #{user.id}})"
 

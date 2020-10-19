@@ -2,9 +2,8 @@
 window.BreathMonit = (function() {
   var cable;
   var measurementChannel;
-  var DISPLAY_TIME_GAP = 120; /* seconds */
+  var displayTimeGap = 30; /* seconds */
   var ITEM_PER_SECOND = 15;
-  var PREFILLED_COUNT = DISPLAY_TIME_GAP * ITEM_PER_SECOND;
   var graphData = [];
   var graphDataFirstTime = true;
   var graph;
@@ -13,8 +12,10 @@ window.BreathMonit = (function() {
 
   var fillGraphData = function() {
     graphData = [];
-    for (var index = 0; index < PREFILLED_COUNT; index++) {
-      graphData.push([index/ITEM_PER_SECOND - DISPLAY_TIME_GAP, 0]);
+    displayTimeGap = parseInt(document.getElementById(`user_display_time_${user_id}`).value);
+    var prefilledCount = displayTimeGap * ITEM_PER_SECOND;
+    for (var index = 0; index < prefilledCount; index++) {
+      graphData.push([index/ITEM_PER_SECOND - displayTimeGap, 0]);
     }
   };
 
@@ -27,8 +28,19 @@ window.BreathMonit = (function() {
         showRoller: true,
         labels: ['Time', 'Breath'],
         showRangeSelector: true,
-        legend: 'always'
+        legend: 'always',
+        axes: {
+          x: {
+            axisLabelFormatter: function(x, gran, opts) {
+              if (x < 0) {
+                x = x + displayTimeGap;
+              }
+                return x;
+            }
+          }
+        }
       });
+
   };
 
   var initStopButton = function () {
