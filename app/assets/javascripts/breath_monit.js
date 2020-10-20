@@ -9,6 +9,31 @@ window.BreathMonit = (function() {
   var graph;
   var user_id;
   var receiveStopped = false;
+  var periodogram;
+  var periodogramTime;
+  var UPDATE_PERIODOGRAM = 3; /* every x seconds */
+
+  var calculatePeriodogram = function() {
+    var signal = graphData.map((x) => x[1]);
+    var periodogramOptions = {};
+    var periodogram = bci.periodogram(signal, ITEM_PER_SECOND, periodogramOptions);
+    var data = periodogram.frequencies.map((x, index) => [1/x, periodogram.estimates[index]]);
+    data.shift();
+    return data;
+  };
+
+  var showPeriodogram = function() {
+    var data = calculatePeriodogram();
+    periodogram = new Dygraph(document.getElementById("periodogram-graph"),
+      data,
+      {
+        drawPoints: true,
+        showRoller: true,
+        labels: ['Period', 'Stregth'],
+        showRangeSelector: true,
+        legend: 'always',
+      });
+  };
 
   var fillGraphData = function() {
     graphData = [];
@@ -81,9 +106,18 @@ window.BreathMonit = (function() {
             if (graphDataFirstTime) {
               graphDataFirstTime = false;
             }
-            graphData.push([data.m.t, data.m.c]);
+            var dataTime = data.m.t;
+            graphData.push([dataTime, data.m.c]);
             graphData.shift();
             graph.updateOptions( { 'file': graphData } );
+            if (data.m.t >= displayTimeGap/2 && !periodogramTime) {
+              periodogramTime = dataTime;
+              showPeriodogram();
+            }
+            if (periodogramTime && (dataTime - periodogramTime) >= UPDATE_PERIODOGRAM) {
+              periodogramTime = dataTime;
+              periodogram.updateOptions({ 'file': calculatePeriodogram() });
+            }
           }
         }
       }

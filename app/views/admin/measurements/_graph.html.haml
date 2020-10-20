@@ -1,6 +1,8 @@
 = javascript_include_tag 'admin/graph'
+= javascript_include_tag 'bci'
 #graph{style: "width: 100%"}
 %div
   %input#download-button(type="button" value="Download")
+#periodogram{style: "width: 100%"}
 :javascript
   AdminGraph.init('#{j measurement.data}');

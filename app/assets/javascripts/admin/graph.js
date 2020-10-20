@@ -1,11 +1,15 @@
 /*jshint esversion: 6 */
 window.AdminGraph = (function() {
   var graphData;
+  var ITEM_PER_SECOND = 15;
+
+  var getValue = (x)=> (x == 'NaN' ? 0 : parseFloat(x));
+
   var init = function(rawGraphData) {
     var graph;
     graphData = rawGraphData.split("\n").map((x) => x.split(" "));
 
-    graphData = graphData.map((y) => [parseFloat(y[0]), parseFloat(y[1])]);
+    graphData = graphData.map((item) => [getValue(item[0]), getValue(item[1])]);
 
     graph = new Dygraph(document.getElementById("graph"),
       graphData,
@@ -17,6 +21,7 @@ window.AdminGraph = (function() {
         legend: 'always'
       });
     initDownloadButton();
+    showPeriodogram();
   };
 
   var saveToFile = function(data, fileName, type) {
@@ -40,6 +45,28 @@ window.AdminGraph = (function() {
       var data = graphData.map((x) =>  x[0] + ',' + x[1]).join("\n");
       saveToFile(data, fileName, 'text/plain');
     });
+  };
+
+  var calculatePeriodogram = function() {
+    var signal = graphData.map((x) => x[1]);
+    var periodogramOptions = {};
+    var periodogram = bci.periodogram(signal, ITEM_PER_SECOND, periodogramOptions);
+    var data = periodogram.frequencies.map((x, index) => [1/x, periodogram.estimates[index]]);
+    data.shift();
+    return data;
+  };
+
+  var showPeriodogram = function() {
+    var data = calculatePeriodogram();
+    var periodogram = new Dygraph(document.getElementById("periodogram"),
+      data,
+      {
+        drawPoints: true,
+        showRoller: true,
+        labels: ['Period', 'Stregth'],
+        showRangeSelector: true,
+        legend: 'always',
+      });
   };
 
   return {
