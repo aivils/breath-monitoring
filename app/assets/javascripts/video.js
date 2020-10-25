@@ -469,7 +469,7 @@ class VideoCap {
 
 class App {
   constructor(options) {
-    if (navigator.mediaDevices && navigator.getUserMedia && window.MediaRecorder) {
+    if (navigator.mediaDevices /* && navigator.getUserMedia && window.MediaRecorder */) {
 
       let urlParams = new URLSearchParams(window.location.search);
       let x = parseInt(urlParams.get('x') || '0') || 0;
