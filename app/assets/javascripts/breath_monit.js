@@ -4,6 +4,7 @@ window.BreathMonit = (function() {
   var measurementChannel;
   var displayTimeGap = 30; /* seconds */
   var ITEM_PER_SECOND = 15;
+  var allData = [];
   var graphData = [];
   var graphDataFirstTime = true;
   var graph;
@@ -36,6 +37,7 @@ window.BreathMonit = (function() {
   };
 
   var fillGraphData = function() {
+    allData = [];
     graphData = [];
     displayTimeGap = parseInt(document.getElementById(`user_display_time_${user_id}`).value);
     var prefilledCount = displayTimeGap * ITEM_PER_SECOND;
@@ -89,7 +91,7 @@ window.BreathMonit = (function() {
     var el = document.getElementById("download-button");
     el.addEventListener('click', function() {
       var fileName = 'breath-monit-' + new Date().toISOString().substring(0,19).replace(/:/g, '-') + '.csv';
-      var data = graphData.map((x) => x[0] + ',' + x[1]).join("\n");
+      var data = allData.map((x) => x[0] + ',' + x[1]).join("\n");
       saveToFile(data, fileName, 'text/plain');
     });
   };
@@ -109,6 +111,7 @@ window.BreathMonit = (function() {
             var dataTime = data.m.t;
             graphData.push([dataTime, data.m.c]);
             graphData.shift();
+            allData.push([dataTime, data.m.c]);
             graph.updateOptions( { 'file': graphData } );
             if (data.m.t >= displayTimeGap/2 && !periodogramTime) {
               periodogramTime = dataTime;
