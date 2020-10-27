@@ -1,4 +1,6 @@
 class Measurement < ApplicationRecord
+  include ActiveModel::Serializers::JSON
+
   belongs_to :user
 
   scope :approved, -> { where(approved: true) }
@@ -7,5 +9,13 @@ class Measurement < ApplicationRecord
   def data_file=(tmp_file)
     tmp_file.rewind
     self.data = tmp_file.read
+  end
+
+  def attributes
+    {
+      id: nil,
+      created_at: nil,
+      errors: nil
+    }
   end
 end

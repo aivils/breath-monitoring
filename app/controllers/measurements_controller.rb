@@ -1,4 +1,6 @@
 class MeasurementsController < ApplicationController
+  respond_to :json, :html
+
   def new
     authorize(:measurement)
     @measurement = resource_scope.new
@@ -8,6 +10,7 @@ class MeasurementsController < ApplicationController
     authorize(:measurement)
     @measurement = resource_scope.new(create_params)
     @measurement.save
+    respond_with(@measurement)
   end
 
   def presence

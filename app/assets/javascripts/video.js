@@ -54,16 +54,20 @@ const csrfToken = () => {
   return null;
 };
 
-function saveToServer(data, savePath, callback) {
+function saveToServer(data, savePath) {
   const formData = new FormData();
   const file = new Blob([data], {type: 'plain/text'});
   formData.append('measurement[data_file]', file, 'data.txt');
   formData.append('authenticity_token', csrfToken());
-  fetch(savePath, {method: 'POST', body: formData})
-    .then(() => {
-      console.log('Uploaded')
-      callback();
-    });
+  formData.append('format', 'json');
+  return fetch(savePath, {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'Accept': 'application/json, text/plain, */*',
+    }
+  })
+  .then(response => response.json());
 }
 
 class Overlay {
@@ -216,7 +220,8 @@ class VideoCap {
         [this.elStatus = el('span.pointer.ba'),
          this.elPause = el('span.pointer.ba.ml2', {style:{display:'none'}}, 'Pause'),
          this.elSave = el('span.pointer.ba', {style:{display:'none'}}, 'Save'),
-         this.elSucess = el('span.pointer.ba', {style:{display:'none'}}, 'Successfully uploaded')
+         this.elSucess = el('span.pointer.ba', {style:{display:'none'}}, 'Successfully uploaded'),
+         this.elError = el('span.pointer.ba.bg-red', {style:{display:'none'}}),
       ]),
       el('#videoInput.absolute',[
         this.elFile = el('input', {type:'file', accept: 'video/*'}),
@@ -339,12 +344,21 @@ class VideoCap {
       /*saveToFile(this.fdata.join('\n'),
                  mkfname(Math.round(this.elVideo.currentTime), this.gsize+'-'),
                  'text/plain');*/
-      saveToServer(this.fdata.join('\n'), this.options.savePath, () => {
+      saveToServer(this.fdata.join('\n'), this.options.savePath)
+      .then((res) => {
         this.elSave.style.display = 'none';
-        this.elSucess.style.display = 'block';
-        setTimeout(() => {
-          this.elSucess.style.display = 'none';
-        }, 5000);
+        if (res.id) {
+          this.elSucess.style.display = 'block';
+          setTimeout(() => {
+            this.elSucess.style.display = 'none';
+          }, 5000);
+        } else {
+          this.elError.style.display = 'block';
+          this.elError.textContent = JSON.stringify(res.errors);
+        }
+      }).catch((err) => {
+        this.elError.style.display = 'block';
+        this.elError.textContent = `Save failed: ${JSON.stringify(err)}`;
       });
     }
   }
@@ -437,7 +451,7 @@ class VideoCap {
       }
       //fps is for graph updata only
       if ((now - this.lastFrameTime) >= this.frameInterval) {
-        const normalized = 1 - Math.round(gcount/this.gsize * 100000) / 100000;
+        const normalized =  Math.round((1 - gcount/this.gsize) * 100000) / 100000;
         this.lastFrameTime = now;
         const elapsedTime = (now - this.firstVideoTime) / 1000 /* seconds */
         this.fdata.push(elapsedTime + ' ' + normalized);
