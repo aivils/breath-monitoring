@@ -21,4 +21,5 @@ Rails.application.routes.draw do
       get :presence
     end
   end
+  resource :profile, only: [:show, :update], controller: 'users/profiles'
 end

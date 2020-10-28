@@ -1,0 +1,21 @@
+<main class="pa4 black-80">
+
+<%= form_for @profile, as: :profile, url: profile_path do |f| %>
+  <%= render "devise/shared/error_messages", resource: @profile %>
+
+    <fieldset id="profile" class="ba b--transparent ph0 mh0">
+      <legend class="f4 fw6 ph0 mh0">Edit Profile</legend>
+      <div class="mt3">
+        <%= f.label :code, class: "db fw6 lh-copy f6" %><br />
+        <%= f.text_field :code, autofocus: true, class: "b pa2 input-reset ba bg-transparent hover-bg-orange hover-white w-100" %>
+      </div>
+
+    </fieldset>
+
+    <div class="">
+      <%= f.submit "Update", class: "b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib" %>
+    </div>
+<% end %>
+
+<%= link_to "Back", :back %>
+</main>
