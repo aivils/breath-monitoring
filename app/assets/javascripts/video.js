@@ -346,8 +346,8 @@ class VideoCap {
                  'text/plain');*/
       saveToServer(this.fdata.join('\n'), this.options.savePath)
       .then((res) => {
-        this.elSave.style.display = 'none';
         if (res.id) {
+          this.elSave.style.display = 'none';
           this.elSucess.style.display = 'block';
           setTimeout(() => {
             this.elSucess.style.display = 'none';
