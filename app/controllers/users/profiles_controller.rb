@@ -10,7 +10,9 @@ class Users::ProfilesController < ApplicationController
   def update
     authorize(@profile)
     @profile.update_attributes(update_params)
-    respond_with(@profile, location: profile_path)
+    respond_with @profile do |format|
+      format.html { render :show }
+    end
   end
 
   private

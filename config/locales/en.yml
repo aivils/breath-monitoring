@@ -44,4 +44,6 @@ en:
         doctors: Therapists
       measurement:
         user: Client
-
+    errors:
+      messages:
+        code_is_invalid: The code can only contain ASCII letters. These are uppercase and lowercase letters, numbers, a dash.
