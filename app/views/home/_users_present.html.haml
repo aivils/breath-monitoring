@@ -21,5 +21,5 @@
                 options_for_select(User::Profile::DISPLAY_TIMES, user.profile.display_time),
                 id: "user_display_time_#{user.id}"
             %td.pv3.pr3.bb.b--black-20
-              = link_to 'Watch', 'javascript:void(0);', onclick: "BreathMonit.watch({user_id: #{user.id}})"
+              = link_to 'Watch', 'javascript:void(0);', onclick: "BreathMonit.watch({user_id: #{user.id}, user_code: '#{user.profile.code}'})"
 

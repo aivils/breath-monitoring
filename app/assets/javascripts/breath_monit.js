@@ -9,6 +9,7 @@ window.BreathMonit = (function() {
   var graphDataFirstTime = true;
   var graph;
   var user_id;
+  var user_code;
   var receiveStopped = false;
   var periodogram;
   var periodogramTime;
@@ -90,7 +91,8 @@ window.BreathMonit = (function() {
   var initDownloadButton = function () {
     var el = document.getElementById("download-button");
     el.addEventListener('click', function() {
-      var fileName = 'breath-monit-' + new Date().toISOString().substring(0,19).replace(/:/g, '-') + '.csv';
+      var date = new Date().toISOString().substring(0,19).replace(/:/g, '-');
+      var fileName = `breath-monit-${user_code}-${date}.csv`;
       var data = allData.map((x) => x[0] + ',' + x[1]).join("\n");
       saveToFile(data, fileName, 'text/plain');
     });
@@ -98,6 +100,7 @@ window.BreathMonit = (function() {
 
   var initReceiver = function(options) {
     user_id = options.user_id;
+    user_code = options.user_code;
     cable = ActionCable.createConsumer();
     measurementChannel = cable.subscriptions.create(
       { channel: "MeasurementChannel", id: user_id },
@@ -157,7 +160,7 @@ window.BreathMonit = (function() {
   var watch = function(options) {
     document.getElementById("users-present-table").style.display = 'none';
     document.getElementById("live-data").style.display = 'block';
-    initReceiver({user_id: options.user_id});
+    initReceiver(options);
   };
 
   return {
