@@ -224,7 +224,7 @@ class VideoCap {
          this.elError = el('span.pointer.ba.bg-red', {style:{display:'none'}}),
       ]),
       el('#videoInput.absolute',[
-        this.elFile = el('input', {type:'file', accept: 'video/*'}),
+        // this.elFile = el('input', {type:'file', accept: 'video/*'}),
         this.elSelectVideoDevice = el('select', {style:{display:'none'}})
       ])
     ]);
@@ -240,7 +240,7 @@ class VideoCap {
     this.elVideo.addEventListener('pause',this.videoPause,false);
     this.elVideo.addEventListener('ended',this.videoEnded,false);
     this.elSave.addEventListener('click',this.saveClick,false);
-    this.elFile.addEventListener('change', this.fileChange, false);
+    // this.elFile.addEventListener('change', this.fileChange, false);
     this.elPause.addEventListener('click', this.togglePause);
   }
   onmount() {
@@ -276,8 +276,10 @@ class VideoCap {
       //no need for elSelectVideoDevice anymore
       this.elSelectVideoDevice.style.display = 'none';
       this.elSelectVideoDevice.removeEventListener('input',this.selectVideoDevice,false);
+      /*
       this.elFile.style.display = 'none';
       this.elFile.removeEventListener('change', this.fileChange, false);
+      */
     }
   }
   fileChange = (evt) => {
