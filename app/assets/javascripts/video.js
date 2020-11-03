@@ -337,12 +337,15 @@ class VideoCap {
     this.lastFrameTime = 0;
     this.fdata = [];
     this.data = [];
+    this.elPause.textContent = 'Pause';
     //note: video.timeupdate is not deterministic - requestAnimationFrame is better
     this.rafID = requestAnimationFrame(this.onFrame.bind(this));
   }
   videoPause = (evt) => {
     //this.elStatus.innerText = 'Paused.';
     cancelAnimationFrame(this.rafID);
+    this.elVideo.currentTime = 0;
+    this.elPause.textContent = 'Start';
     this.elSave.style.display = 'block';
   }
   videoEnded = (evt) => {
@@ -480,14 +483,10 @@ class VideoCap {
   }
 
   togglePause = (evt) => {
-    let el = evt.target;
-    let text = el.textContent;
-    if (text == 'Pause') {
-      el.textContent = 'Start';
-      this.elVideo.pause();
-    } else {
-      el.textContent = 'Pause';
+    if (this.elVideo.paused) {
       this.elVideo.play();
+    } else {
+      this.elVideo.pause();
     }
   }
 
@@ -496,7 +495,9 @@ class VideoCap {
     this.elShowCode.textContent = `Code: ${this.elCode.value}`;
     this.elShowCode.style.display = 'block';
     this.elCodeForm.style.display = 'none';
-    this.elSelectVideoDevice.style.display = 'block';
+    if (this.elSelectVideoDevice.children.length > 0) {
+      this.elSelectVideoDevice.style.display = 'block';
+    }
     return false;
   }
 }
