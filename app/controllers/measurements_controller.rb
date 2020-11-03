@@ -24,7 +24,7 @@ class MeasurementsController < ApplicationController
   private
 
   def create_params
-    params.require(:measurement).permit(:data_file)
+    params.require(:measurement).permit(:data_file, :code)
   end
 
   def resource_scope

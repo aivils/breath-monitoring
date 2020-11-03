@@ -7,6 +7,7 @@ ActiveAdmin.register Measurement do
     selectable_column
     id_column
     column :user
+    column :code
     column :approved
     column :processed
     column :created_at
@@ -24,6 +25,7 @@ ActiveAdmin.register Measurement do
     attributes_table do
       row :id
       row :user
+      row :code
       row :approved
       row :processed
       row :graph do |record|

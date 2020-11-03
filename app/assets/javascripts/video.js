@@ -54,10 +54,11 @@ const csrfToken = () => {
   return null;
 };
 
-function saveToServer(data, savePath) {
+function saveToServer(data, savePath, code) {
   const formData = new FormData();
   const file = new Blob([data], {type: 'plain/text'});
   formData.append('measurement[data_file]', file, 'data.txt');
+  formData.append('measurement[code]', code);
   formData.append('authenticity_token', csrfToken());
   formData.append('format', 'json');
   return fetch(savePath, {
@@ -203,6 +204,7 @@ class VideoCap {
     //console.log('VideoCap', options);
     this.options = options;
     this.el = el('.relative.flex.justify-center.items-center', [
+      this.elShowCode = el('.absolute', {style: {display: 'none', "min-width": '200px', top: '-30px'}}),
       this.elVideo = el('video', {controls:true, style:{display:'none'}}),
       //this.elVideo = el('video', {src:'test.mkv', style:{display:'none'}}),
       this.elGraph = el('canvas.absolute.self-start.w-100.h3.bg-black.o-70', {style:{display:'none'}}),
@@ -225,6 +227,13 @@ class VideoCap {
       ]),
       el('#videoInput.absolute',[
         // this.elFile = el('input', {type:'file', accept: 'video/*'}),
+        this.elCodeForm = el('form.w-100', {style: {"min-width": '200px'}}, [
+          el('label', {}, 'Code:'),
+          this.elCode = el('input', {type: 'text', name: 'code',
+            pattern: '[_a-zA-Z0-9]+', required: true, placeholder: 'Enter the code',
+            title: "Only numbers, letters and underscore are allowed !"}),
+          el('input.ma1', {type: 'submit', value: 'Submit'})
+        ]),
         this.elSelectVideoDevice = el('select', {style:{display:'none'}})
       ])
     ]);
@@ -242,6 +251,7 @@ class VideoCap {
     this.elSave.addEventListener('click',this.saveClick,false);
     // this.elFile.addEventListener('change', this.fileChange, false);
     this.elPause.addEventListener('click', this.togglePause);
+    this.elCodeForm.addEventListener('submit', this.handleSubmitCodeForm);
   }
   onmount() {
     //console.log('VideoCap.onmount');
@@ -253,7 +263,7 @@ class VideoCap {
       if (devlist.length > 1) {
         this.elSelectVideoDevice.addEventListener('input',this.selectVideoDevice,false);
         setChildren(this.elSelectVideoDevice, devlist);
-        this.elSelectVideoDevice.style.display = 'block';
+        // this.elSelectVideoDevice.style.display = 'block';
       }
     });
   }
@@ -346,7 +356,7 @@ class VideoCap {
       /*saveToFile(this.fdata.join('\n'),
                  mkfname(Math.round(this.elVideo.currentTime), this.gsize+'-'),
                  'text/plain');*/
-      saveToServer(this.fdata.join('\n'), this.options.savePath)
+      saveToServer(this.fdata.join('\n'), this.options.savePath, this.elCode.value)
       .then((res) => {
         if (res.id) {
           this.elSave.style.display = 'none';
@@ -480,6 +490,15 @@ class VideoCap {
       this.elVideo.play();
     }
   }
+
+  handleSubmitCodeForm = (evt) => {
+    evt.preventDefault();
+    this.elShowCode.textContent = `Code: ${this.elCode.value}`;
+    this.elShowCode.style.display = 'block';
+    this.elCodeForm.style.display = 'none';
+    this.elSelectVideoDevice.style.display = 'block';
+    return false;
+  }
 }
 
 
@@ -508,6 +527,7 @@ class App {
       this.el = el('#app.w-100.h-100.flex.justify-center.items-center',
         this.videocap = new VideoCap({x:x, y:y, w:w, h:h, fps:fps, gmax:gmax, savePath: options.savePath})
       );
+        var xxx = 1;
     } else {
       this.el = el('p.bg-yellow.w-100.h-100.flex.justify-center.items-center', 'Supported/Tested browsers are Google Chrome 79+ or iOS Safari');
     }
