@@ -3,12 +3,14 @@ window.AdminGraph = (function() {
   var graphData;
   var ITEM_PER_SECOND = 15;
   var code;
+  var created_at;
 
   var getValue = (x)=> (x == 'NaN' ? 0 : parseFloat(x));
 
   var init = function(options) {
     var graph;
     code = options.code;
+    created_at = options.created_at;
     graphData = options.data.split("\n").map((x) => x.split(" "));
 
     graphData = graphData.map((item) => [getValue(item[0]), getValue(item[1])]);
@@ -43,7 +45,7 @@ window.AdminGraph = (function() {
   var initDownloadButton = function () {
     var el = document.getElementById("download-button");
     el.addEventListener('click', function() {
-      var fileName = 'breath-monit-' + code + '-' + new Date().toISOString().substring(0,19).replace(/:/g, '-') + '.csv';
+      var fileName = code + '-' + created_at.substring(0,19).replace(/:/g, '-') + '.csv';
       var data = graphData.map((x) =>  x[0] + ',' + x[1]).join("\n");
       saveToFile(data, fileName, 'text/plain');
     });
