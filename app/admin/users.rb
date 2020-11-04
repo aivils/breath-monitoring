@@ -5,9 +5,6 @@ ActiveAdmin.register User do
     column :email
     #column :current_sign_in_at
     #column :sign_in_count
-    column "Code" do |user|
-      user.profile.code
-    end
     column :roles
     column :patients_count
     column :created_at
@@ -15,7 +12,6 @@ ActiveAdmin.register User do
   end
 
   filter :email
-  filter :profile_code, as: :string
   #filter :current_sign_in_at
   #filter :sign_in_count
   filter :created_at
@@ -30,7 +26,6 @@ ActiveAdmin.register User do
           f.input :password_confirmation
           f.has_many :profile, new_record: false do |pf|
             pf.input :id, as: :hidden
-            pf.input :code
             pf.input :display_time, as: :select, collection: User::Profile::DISPLAY_TIMES
           end
         end
@@ -50,9 +45,6 @@ ActiveAdmin.register User do
   show do
     attributes_table do
       row :email
-      row :code do |user|
-        user.profile.code
-      end
       row :display_time do |user|
         user.profile.display_time
       end
@@ -68,6 +60,5 @@ ActiveAdmin.register User do
     profile_attributes: [
       :id,
       :display_time,
-      :code
     ]
 end
