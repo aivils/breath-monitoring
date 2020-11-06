@@ -8,9 +8,9 @@ function nstr(n) {
 function hhmmss(secs) {
   if (secs >= (3600)) {
     let rsecs = secs % 3600;
-    return nstr(Math.round(secs/3600)) + ':' + nstr(Math.round(rsecs/60)) + ':' + nstr(rsecs%60);
+    return nstr(Math.floor(secs/3600)) + ':' + nstr(Math.floor(rsecs/60)) + ':' + nstr(rsecs%60);
   } else if (secs >= 60) {
-    return nstr(Math.round(secs/60)) + ':' + nstr(secs%60);
+    return nstr(Math.floor(secs/60)) + ':' + nstr(secs%60);
   } else {
     return nstr(secs);
   }
