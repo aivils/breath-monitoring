@@ -1,5 +1,4 @@
 class MeasurementsController < ApplicationController
-  before_action :ensure_user_profile_code, only: :new
   respond_to :json, :html
 
   def new
@@ -29,12 +28,5 @@ class MeasurementsController < ApplicationController
 
   def resource_scope
     policy_scope(current_user.measurements)
-  end
-
-  def ensure_user_profile_code
-    if current_user.profile.code.blank?
-      redirect_to profile_path, alert: "To start the measurement you need to fill in the code in your profile."
-    end
-    true
   end
 end
