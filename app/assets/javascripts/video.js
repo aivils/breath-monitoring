@@ -83,7 +83,7 @@ class Overlay {
     this.onMove = options.onMove;
     this.onResize = options.onResize;
     //note: default display is none
-    this.el = el('.absolute.flex.ba.bw1.b--blue.pointer.w3.h3',
+    this.el = el('.absolute.flex.ba.bw1.b--green.pointer.w3.h3',
       {style:{resize:'both', draggable:true, overflow:'auto', display:'none'}},
     )
     this.ro = new ResizeObserver(this.resize).observe(this.el);
@@ -180,6 +180,14 @@ class Overlay {
     if (this.onMove) {
       this.onMove({x:parseInt(this.el.style.left), y:parseInt(this.el.style.top)});
     }
+  }
+  stateAlert = () => {
+    this.el.classList.remove("b--green");
+    this.el.classList.add("b--red");
+  }
+  stateNormal = () => {
+    this.el.classList.add("b--green");
+    this.el.classList.remove("b--red");
   }
 }
 
@@ -435,26 +443,39 @@ class VideoCap {
         0, 0,
         this.elOverlayCanvas.width, this.elOverlayCanvas.height);
 
-      // get the imageData from OffScreenCanvas
-      let rgba = ctxOverlay.getImageData(0, 0, this.elOverlayCanvas.width, this.elOverlayCanvas.height);
-
-      // grayscale magic-numbers change as reqd.
-      //from http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html
-      //const rgb2gs = [0.2125, 0.7154, 0.0721];
-      const rgb2gs = [0.299, 0.587, 0.114];
-      let gcount = 0;
-      for (let i = 0; i < rgba.data.length; i += 4) {
-        let mono = (rgba.data[i] * rgb2gs[0]) + (rgba.data[i+1] * rgb2gs[1]) + (rgba.data[i+1] * rgb2gs[2]);
-        //convert mono into bw and count white pixels
-        if (mono < this.options.gmax) {
-          gcount++;
-          mono = 0;
-        } else {
-          mono = 255;
+      const calculateGrayscale = (rgba) => {
+        // grayscale magic-numbers change as reqd.
+        //from http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html
+        //const rgb2gs = [0.2125, 0.7154, 0.0721];
+        const rgb2gs = [0.299, 0.587, 0.114];
+        let gcount = 0;
+        for (let i = 0; i < rgba.data.length; i += 4) {
+          let mono = (rgba.data[i] * rgb2gs[0]) + (rgba.data[i+1] * rgb2gs[1]) + (rgba.data[i+1] * rgb2gs[2]);
+          //convert mono into bw and count white pixels
+          if (mono < this.options.gmax) {
+            gcount++;
+            mono = 0;
+          } else {
+            mono = 255;
+          }
+          rgba.data[i] = mono;
+          rgba.data[i+1] = mono;
+          rgba.data[i+2] = mono;
         }
-        rgba.data[i] = mono;
-        rgba.data[i+1] = mono;
-        rgba.data[i+2] = mono;
+        return gcount;
+      }
+      const halfHeight = Math.round(this.elOverlayCanvas.height/2);
+      const upperRgba = ctxOverlay.getImageData(0, 0, this.elOverlayCanvas.width, halfHeight);
+      const upperGcount = calculateGrayscale(upperRgba);
+      const lowerRgba = ctxOverlay.getImageData(0, halfHeight, this.elOverlayCanvas.width, halfHeight);
+      const lowerGcount = calculateGrayscale(lowerRgba);
+      // get the imageData from OffScreenCanvas
+      const rgba = ctxOverlay.getImageData(0, 0, this.elOverlayCanvas.width, this.elOverlayCanvas.height);
+      const gcount = calculateGrayscale(rgba);
+      if (upperGcount > lowerGcount) {
+        this.elOverlay.stateAlert();
+      } else {
+        this.elOverlay.stateNormal();
       }
 
       // draw modified Image on overlayCanvas
