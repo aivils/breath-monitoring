@@ -5,4 +5,4 @@
   %input#download-button(type="button" value="Download")
 #periodogram{style: "width: 100%"}
 :javascript
-  AdminGraph.init(#{json_escape({data: measurement.data, code: measurement.code, created_at: measurement.created_at.utc}.to_json).html_safe});
+  AdminGraph.init(#{json_escape({data: measurement.data, code: measurement.code, created_at: measurement.created_at.utc, data_window_start: measurement.data_window_start, data_window_end: measurement.data_window_end}.to_json).html_safe});

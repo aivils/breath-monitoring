@@ -4,6 +4,8 @@ window.AdminGraph = (function() {
   var ITEM_PER_SECOND = 15;
   var code;
   var created_at;
+  var data_window;
+  var data_window_start, data_window_end;
 
   var getValue = (x)=> (x == 'NaN' ? 0 : parseFloat(x));
 
@@ -12,18 +14,27 @@ window.AdminGraph = (function() {
     code = options.code;
     created_at = options.created_at;
     graphData = options.data.split("\n").map((x) => x.split(" "));
+    data_window_start = options.data_window_start;
+    data_window_end = options.data_window_end;
+    data_window = typeof options.data_window_start === 'number';
 
     graphData = graphData.map((item) => [getValue(item[0]), getValue(item[1])]);
-
+    graphOptions = {
+      drawPoints: true,
+      showRoller: true,
+      labels: ['Time', 'Breath'],
+      showRangeSelector: true,
+      legend: 'always',
+      zoomCallback: function(minDate, maxDate, yRange) {
+        data_window_start = minDate;
+        data_window_end = maxDate;
+      },
+    };
+    if (data_window) {
+      graphOptions.dateWindow = [data_window_start, data_window_end];
+    }
     graph = new Dygraph(document.getElementById("graph"),
-      graphData,
-      {
-        drawPoints: true,
-        showRoller: true,
-        labels: ['Time', 'Breath'],
-        showRangeSelector: true,
-        legend: 'always'
-      });
+      graphData, graphOptions);
     initDownloadButton();
     showPeriodogram();
   };
@@ -42,11 +53,21 @@ window.AdminGraph = (function() {
     }, 0);
   };
 
+  var selectedGraphData = function() {
+    var data = graphData;
+    if (data_window) {
+      data = graphData.filter(function(item) {
+        return item[0] >= data_window_start && item[0] <= data_window_end;
+      });
+    }
+    return data;
+  };
+
   var initDownloadButton = function () {
     var el = document.getElementById("download-button");
     el.addEventListener('click', function() {
       var fileName = code + '-' + created_at.substring(0,19).replace(/:/g, '-') + '.csv';
-      var data = graphData.map((x) =>  x[0] + ',' + x[1]).join("\n");
+      var data = selectedGraphData().map((x) =>  x[0] + ',' + x[1]).join("\n");
       saveToFile(data, fileName, 'text/plain');
     });
   };

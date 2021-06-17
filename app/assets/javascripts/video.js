@@ -401,10 +401,10 @@ class VideoCap {
           this.elError.style.display = 'block';
           this.elError.textContent = JSON.stringify(res.errors);
         }
-      })/*.catch((err) => {
+      }).catch((err) => {
         this.elError.style.display = 'block';
         this.elError.textContent = `Save failed: ${JSON.stringify(err)}`;
-      });*/
+      });
     }
   }
   overlayResize = (evt) => {
