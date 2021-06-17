@@ -19,7 +19,17 @@ window.UserGraph = (function() {
         'Accept': 'application/json, text/plain, */*',
       }
     })
-    .then(response => response.json());
+    .then(response => {
+      document.getElementById('user-graph-container').style.display = 'none';
+      var result = document.getElementById('save-success');
+      result.style.display = 'block';
+      result.innerHTML = 'Saved successfully';
+    })
+    .catch((err) => {
+      var result = document.getElementById('save-fail');
+      result.style.display = 'block';
+      result.innerHTML = `Saved failed ${JSON.stringify(err)}`;
+    });
   };
 
   const init = function(options) {
@@ -31,6 +41,8 @@ window.UserGraph = (function() {
 
     graphData = graphData.map((item) => [getValue(item[0]), getValue(item[1])]);
 
+    dataWindowStart = 0;
+    dataWindowEnd = recordDataWindowLength;
     graph = new Dygraph(document.getElementById("graph"),
       graphData,
       {
@@ -38,7 +50,7 @@ window.UserGraph = (function() {
         showRoller: true,
         labels: ['Time', 'Breath'],
         legend: 'always',
-        dateWindow: [0, recordDataWindowLength],
+        dateWindow: [dataWindowStart, dataWindowEnd],
       });
     const range = document.getElementById('graph-period');
     range.addEventListener('input', (evt) => {
