@@ -20,10 +20,21 @@ class MeasurementsController < ApplicationController
     head :ok
   end
 
+  def update
+    authorize(:measurement)
+    @measurement = resource_scope.find(params[:id])
+    @measurement.update_attributes(update_params)
+    respond_with(@measurement)
+  end
+
   private
 
   def create_params
     params.require(:measurement).permit(:data_file, :code)
+  end
+
+  def update_params
+    params.require(:measurement).permit(:data_window_start, :data_window_end)
   end
 
   def resource_scope

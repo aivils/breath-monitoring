@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_03_154043) do
+ActiveRecord::Schema.define(version: 2021_06_17_075958) do
 
   create_table "active_admin_comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "namespace"
@@ -43,6 +43,8 @@ ActiveRecord::Schema.define(version: 2020_11_03_154043) do
     t.boolean "approved"
     t.boolean "processed"
     t.string "code"
+    t.float "data_window_start"
+    t.float "data_window_end"
     t.index ["approved"], name: "index_measurements_on_approved"
     t.index ["processed"], name: "index_measurements_on_processed"
     t.index ["user_id"], name: "index_measurements_on_user_id"
@@ -67,6 +69,7 @@ ActiveRecord::Schema.define(version: 2020_11_03_154043) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "code"
+    t.integer "record_mode", default: 0
     t.index ["user_id"], name: "index_user_profiles_on_user_id"
   end
 

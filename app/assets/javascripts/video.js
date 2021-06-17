@@ -260,6 +260,7 @@ class VideoCap {
     // this.elFile.addEventListener('change', this.fileChange, false);
     this.elPause.addEventListener('click', this.togglePause);
     this.elCodeForm.addEventListener('submit', this.handleSubmitCodeForm);
+    this.modeGraphAfterSave = this.options.recordMode == 'graph_after_save';
   }
   onmount() {
     //console.log('VideoCap.onmount');
@@ -362,6 +363,16 @@ class VideoCap {
     this.elSave.style.display = 'block';
   }
   saveClick = (evt) => {
+    this.handleSave({});
+  }
+  stopStream = () => {
+    this.elVideo.srcObject.getTracks().forEach(function(track) {
+      if (track.readyState == 'live') {
+        track.stop();
+      }
+    });
+  }
+  handleSave = (saveOptions) => {
     //console.log('pndng.save');
     if (this.fdata && this.fdata.length > 0) {
       /*saveToFile(this.fdata.join('\n'),
@@ -375,14 +386,25 @@ class VideoCap {
           setTimeout(() => {
             this.elSucess.style.display = 'none';
           }, 5000);
+          if (this.modeGraphAfterSave) {
+            this.stopStream();
+            document.getElementById('video-container').style.display = 'none';
+            window.UserGraph.init({
+              data: this.fdata,
+              recordLength: this.options.recordLength,
+              recordDataWindowLength: this.options.recordDataWindowLength,
+              measurementId: res.id,
+              savePath: this.options.savePath
+            });
+          }
         } else {
           this.elError.style.display = 'block';
           this.elError.textContent = JSON.stringify(res.errors);
         }
-      }).catch((err) => {
+      })/*.catch((err) => {
         this.elError.style.display = 'block';
         this.elError.textContent = `Save failed: ${JSON.stringify(err)}`;
-      });
+      });*/
     }
   }
   overlayResize = (evt) => {
@@ -494,6 +516,11 @@ class VideoCap {
         this.updateGraph(normalized); //% of overlaypixels
         this.elStatus.innerText = hhmmss(Math.round(elapsedTime));
         BreathMonit.send({t: elapsedTime, c: normalized});
+
+        if (this.modeGraphAfterSave && elapsedTime >= this.options.recordLength) {
+          this.elVideo.pause();
+          this.handleSave({});
+        }
       }
 
     //} else {
@@ -547,9 +574,12 @@ class App {
       gmax = ((gmax >= 0) && (gmax <= 255)) ? gmax : 126;
 
       this.el = el('#app.w-100.h-100.flex.justify-center.items-center',
-        this.videocap = new VideoCap({x:x, y:y, w:w, h:h, fps:fps, gmax:gmax, savePath: options.savePath})
+        this.videocap = new VideoCap({x:x, y:y, w:w, h:h, fps:fps, gmax:gmax,
+          savePath: options.savePath, recordMode: options.recordMode,
+          recordLength: options.recordLength,
+          recordDataWindowLength: options.recordDataWindowLength,
+        })
       );
-        var xxx = 1;
     } else {
       this.el = el('p.bg-yellow.w-100.h-100.flex.justify-center.items-center', 'Supported/Tested browsers are Google Chrome 79+ or iOS Safari');
     }

@@ -51,3 +51,14 @@
 #periodogram-graph {
   height: 400px;
 }
+
+#user-graph-container {
+  display: none;
+}
+
+#graph-period {
+  width: 100%;
+  max-width: 480px;
+  margin-left: 20px;
+  margin-right: 20px;
+}

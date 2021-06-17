@@ -28,6 +28,8 @@ ActiveAdmin.register Measurement do
       row :code
       row :approved
       row :processed
+      row :data_window_start
+      row :data_window_end
       row :graph do |record|
         render 'admin/measurements/graph', { measurement: record }
       end
@@ -42,5 +44,5 @@ ActiveAdmin.register Measurement do
   # See permitted parameters documentation:
   # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
 
-  permit_params :user_id, :data, :approved, :processed
+  permit_params :user_id, :data, :approved, :processed, :data_window_start, :data_window_end
 end

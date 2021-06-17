@@ -5,3 +5,4 @@
 
 //= require video
 //= require breath_monit
+//= require user_graph
