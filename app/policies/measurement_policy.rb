@@ -20,4 +20,8 @@ class MeasurementPolicy < ApplicationPolicy
   def presence?
     is_user?
   end
+
+  def update?
+    is_user?
+  end
 end
