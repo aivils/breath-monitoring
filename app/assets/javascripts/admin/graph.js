@@ -6,6 +6,7 @@ window.AdminGraph = (function() {
   var created_at;
   var data_window;
   var data_window_start, data_window_end;
+  var periodogramGraph;
 
   var getValue = (x)=> (x == 'NaN' ? 0 : parseFloat(x));
 
@@ -28,6 +29,8 @@ window.AdminGraph = (function() {
       zoomCallback: function(minDate, maxDate, yRange) {
         data_window_start = minDate;
         data_window_end = maxDate;
+        var periodogramData = calculatePeriodogram();
+        periodogramGraph.updateOptions( { 'file': periodogramData } );
       },
     };
     if (data_window) {
@@ -73,7 +76,7 @@ window.AdminGraph = (function() {
   };
 
   var calculatePeriodogram = function() {
-    var signal = graphData.map((x) => x[1]);
+    var signal = selectedGraphData().map((x) => x[1]);
     var periodogramOptions = {};
     var periodogram = bci.periodogram(signal, ITEM_PER_SECOND, periodogramOptions);
     var data = periodogram.frequencies.map((x, index) => [1/x, periodogram.estimates[index]]);
@@ -83,7 +86,7 @@ window.AdminGraph = (function() {
 
   var showPeriodogram = function() {
     var data = calculatePeriodogram();
-    var periodogram = new Dygraph(document.getElementById("periodogram"),
+    periodogramGraph = new Dygraph(document.getElementById("periodogram"),
       data,
       {
         drawPoints: true,
