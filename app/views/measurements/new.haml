@@ -6,14 +6,8 @@
   #save-success.bg-green.white.pa1{style: 'display: none;'}
   #save-fail.bg-red.white.pa1{style: 'display: none;'}
   #user-graph-container.fl.w-100.cf.h2
-    #graph
-    .w-100
-      %input{type: "range", id: "graph-period", name: "graph-period", min: "0", max: "100", step: "1", value: "0"}
     .w-100.pa2.tl
-      Please select the smoothest place in your recording using the slider. Then press the "save" button.
-    .w-100.tc
-      %span#save-data-window.pointer.ba.bg-orange.white.pa1
-        Save
+      Your measurement is complete.
 
 :javascript
   //app is global cuz. need to debug in console

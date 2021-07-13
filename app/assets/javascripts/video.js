@@ -283,6 +283,7 @@ class VideoCap {
     this.elVideo.play();
   }
   videoError = (err) => {
+    this.topBar.style.display = 'block';
     this.elStatus.innerText = err.name + ': Allow access to camera, and try again.';
   }
   selectVideoDevice = (evt) => {
@@ -389,13 +390,8 @@ class VideoCap {
           if (this.modeGraphAfterSave) {
             this.stopStream();
             document.getElementById('video-container').style.display = 'none';
-            window.UserGraph.init({
-              data: this.fdata,
-              recordLength: this.options.recordLength,
-              recordDataWindowLength: this.options.recordDataWindowLength,
-              measurementId: res.id,
-              savePath: this.options.savePath
-            });
+            document.getElementById('user-graph-container').style.display = 'block';
+            new Audio('/assets/beep.mp3').play();
           }
         } else {
           this.elError.style.display = 'block';
