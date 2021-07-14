@@ -391,7 +391,7 @@ class VideoCap {
             this.stopStream();
             document.getElementById('video-container').style.display = 'none';
             document.getElementById('user-graph-container').style.display = 'block';
-            new Audio('/assets/beep.mp3').play();
+            new Audio(this.options.beepFilePath).play();
           }
         } else {
           this.elError.style.display = 'block';
@@ -569,12 +569,14 @@ class App {
       let gmax = parseInt(urlParams.get('gmax') || '126') || 126;
       gmax = ((gmax >= 0) && (gmax <= 255)) ? gmax : 126;
 
+      options.x = x;
+      options.y = y;
+      options.w = w;
+      options.h = h;
+      options.fps = fps;
+      options.gmax = gmax;
       this.el = el('#app.w-100.h-100.flex.justify-center.items-center',
-        this.videocap = new VideoCap({x:x, y:y, w:w, h:h, fps:fps, gmax:gmax,
-          savePath: options.savePath, recordMode: options.recordMode,
-          recordLength: options.recordLength,
-          recordDataWindowLength: options.recordDataWindowLength,
-        })
+        this.videocap = new VideoCap(options)
       );
     } else {
       this.el = el('p.bg-yellow.w-100.h-100.flex.justify-center.items-center', 'Supported/Tested browsers are Google Chrome 79+ or iOS Safari');
