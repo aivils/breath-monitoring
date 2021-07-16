@@ -7,7 +7,8 @@ class ApplicationController < ActionController::Base
 
   def no_pundit_controller?
     is_a?(ActiveAdmin::BaseController) ||
-      is_a?(DeviseController)
+      is_a?(DeviseController) ||
+      is_a?(Api::V1::ApiController)
   end
 
   def user_not_authorized

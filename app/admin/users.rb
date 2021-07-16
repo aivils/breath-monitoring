@@ -24,6 +24,7 @@ ActiveAdmin.register User do
           f.input :email
           f.input :password
           f.input :password_confirmation
+          f.input :apikey
           f.has_many :profile, new_record: false do |pf|
             pf.input :id, as: :hidden
             pf.input :display_time, as: :select, collection: User::Profile::DISPLAY_TIMES
@@ -46,6 +47,7 @@ ActiveAdmin.register User do
   show do
     attributes_table do
       row :email
+      row :apikey
       row :display_time do |user|
         user.profile.display_time
       end
@@ -59,7 +61,7 @@ ActiveAdmin.register User do
     active_admin_comments
   end
 
-  permit_params :email, :password, :password_confirmation, role_ids: [],
+  permit_params :email, :password, :password_confirmation, :apikey, role_ids: [],
     patient_ids: [], doctor_ids: [],
     profile_attributes: [
       :id,

@@ -10,7 +10,7 @@ class MeasurementsController < ApplicationController
     authorize(:measurement)
     @measurement = resource_scope.new(create_params)
     @measurement.save
-    respond_with(@measurement)
+    render json: @measurement.to_front_end
   end
 
   def presence
@@ -24,7 +24,7 @@ class MeasurementsController < ApplicationController
     authorize(:measurement)
     @measurement = resource_scope.find(params[:id])
     @measurement.update_attributes(update_params)
-    respond_with(@measurement)
+    rendr json: @measurement.to_front_end
   end
 
   private

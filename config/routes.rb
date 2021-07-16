@@ -16,10 +16,16 @@ Rails.application.routes.draw do
   root to: 'home#index'
   get 'home/index'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
-  resources :measurements do
+  resources :measurements, only: [:new, :create, :update] do
     collection do
       get :presence
     end
   end
   #resource :profile, only: [:show, :update], controller: 'users/profiles'
+
+  namespace :api, defaults: { format: :json } do
+    namespace :v1 do
+      resources :measurements, only: [:index, :show, :update]
+    end
+  end
 end
