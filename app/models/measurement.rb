@@ -27,4 +27,15 @@ class Measurement < ApplicationRecord
       :errors
     ])
   end
+
+  def data_parsed
+    data.split("\n")
+    .map { |item| item.split(" ") }
+    .map do |item|
+      item[1] = 0 if item[1] == 'NaN'
+      item[0] = item[0].to_f
+      item[1] = item[1].to_f
+      item
+    end
+  end
 end

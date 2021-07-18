@@ -4,11 +4,11 @@ module Api
       respond_to :json
 
       def index
-        respond_with(resource_scope.unprocessed)
+        respond_with(resource_scope.unprocessed.as_json(methods: :data_parsed))
       end
 
       def show
-        respond_with(resource_scope.find(params[:id]))
+        respond_with(resource_scope.find(params[:id]).as_json(methods: :data_parsed))
       end
 
       def update
