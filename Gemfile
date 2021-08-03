@@ -16,6 +16,7 @@ gem 'activeadmin'
 gem 'redis'
 gem 'recaptcha'
 gem 'dotenv-rails'
+gem 'kaminari'
 
 gem 'foreman', '0.87.1', require: false
 

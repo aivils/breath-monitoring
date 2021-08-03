@@ -2,9 +2,10 @@ module Api
   module V1
     class MeasurementsController < ApiController
       respond_to :json
+      PER_PAGE = 20
 
       def index
-        respond_with(resource_scope.unprocessed.as_json(methods: :data_parsed))
+        respond_with(resource_scope.unprocessed.page(params[:page]).per(PER_PAGE).as_json(methods: :data_parsed))
       end
 
       def show
