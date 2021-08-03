@@ -14,6 +14,7 @@ class Measurement < ApplicationRecord
         .where('measurements.user_id = doctor_patients.patient_id')
     end
   end
+  scope :c19_host, -> { where(c19_host: true) }
 
   def data_file=(tmp_file)
     tmp_file.rewind

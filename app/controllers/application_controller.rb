@@ -15,4 +15,8 @@ class ApplicationController < ActionController::Base
     flash[:alert] = "You are not authorized to perform this action."
     redirect_to(request.referrer || root_path)
   end
+
+  def c19_host?
+    @c19_host ||= request.env['SERVER_NAME'].present? && request.env['SERVER_NAME'].match(/covid19/)
+  end
 end

@@ -21,7 +21,9 @@ module Api
       private
 
       def resource_scope
-        Measurement.api_measurements(@current_api_user)
+        scope = Measurement.api_measurements(@current_api_user)
+        scope = scope.c19_host if c19_host?
+        scope
       end
 
       def update_params

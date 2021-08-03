@@ -10,6 +10,7 @@ class MeasurementsController < ApplicationController
     authorize(:measurement)
     @measurement = resource_scope.new(create_params)
     @measurement.save
+    @measurement.update_column(:c19_host, true) if c19_host?
     render json: @measurement.to_front_end
   end
 

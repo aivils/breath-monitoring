@@ -2,6 +2,7 @@ ActiveAdmin.register Measurement do
   scope :all
   scope :approved
   scope :processed
+  scope :c19_host
 
   index do
     selectable_column
@@ -19,6 +20,7 @@ ActiveAdmin.register Measurement do
   }
   filter :approved
   filter :processed
+  filter :c19_host
   filter :created_at
 
   show do
@@ -26,6 +28,7 @@ ActiveAdmin.register Measurement do
       row :id
       row :user
       row :code
+      row :c19_host
       row :approved
       row :processed
       row :c19_probability
@@ -45,5 +48,5 @@ ActiveAdmin.register Measurement do
   # See permitted parameters documentation:
   # https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
 
-  permit_params :user_id, :data, :approved, :processed, :data_window_start, :data_window_end
+  permit_params :user_id, :data, :approved, :processed, :data_window_start, :data_window_end, :c19_host
 end
