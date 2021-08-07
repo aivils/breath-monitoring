@@ -19,4 +19,6 @@ class ApplicationController < ActionController::Base
   def c19_host?
     @c19_host ||= request.env['SERVER_NAME'].present? && request.env['SERVER_NAME'].match(/covid19/)
   end
+
+  helper_method :c19_host?
 end

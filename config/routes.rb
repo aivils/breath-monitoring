@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   root to: 'home#index'
   get 'home/index'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
-  resources :measurements, only: [:new, :create, :update] do
+  resources :measurements, only: [:index, :new, :create, :update] do
     collection do
       get :presence
     end

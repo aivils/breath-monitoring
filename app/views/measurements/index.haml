@@ -1,0 +1,23 @@
+.fl.w-100
+  .fl.w-100.tc
+    %h1 Results
+  .w-100
+    %table.f6.w-100.mw8.center(cellspacing="0")
+      %thead
+        %tr.stripe-dark
+          %th.fw6.tl.pa3.bg-white
+            Covid19
+            %br
+            Probability
+          %th.fw6.tl.pa3.bg-white
+            Created at
+      %tbody.lh-copy
+        - @measurements.each do |measurement|
+          %tr.stripe-dark
+            %td.pa3
+              = measurement.c19_probability
+            %td.pa3
+              = l(measurement.created_at, format: :short)
+    .w-100
+      = paginate @measurements
+

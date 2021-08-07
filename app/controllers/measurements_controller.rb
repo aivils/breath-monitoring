@@ -1,6 +1,10 @@
 class MeasurementsController < ApplicationController
   respond_to :json, :html
 
+  def index
+    @measurements = resource_scope.latest.page(params[:page]).per(10)
+  end
+
   def new
     authorize(:measurement)
     @measurement = resource_scope.new

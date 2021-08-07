@@ -6,6 +6,8 @@
     %a.f6.link.dib.white.dim.mr3.mr4-ns{:href => "#0"} About
     - if user_signed_in?
       %a.f6.link.dib.white.dim.mr3.mr4-ns{:href => new_measurement_path} Measure
+      - if c19_host?
+        %a.f6.link.dib.white.dim.mr3.mr4-ns{:href => measurements_path} Results
       %a.f6.link.dib.white.dim.mr3.mr4-ns{:href => edit_user_registration_path} Account
       %a.f6.dib.white.bg-animate.hover-bg-white.hover-black.no-underline.pv2.ph4.br-pill.ba.b--white-20{:href => destroy_user_session_path, data: {method: :delete}} Sign Out
     -else
