@@ -16,7 +16,8 @@
     recordMode: '#{current_user.profile.record_mode}',
     recordLength: 120,
     recordDataWindowLength: 64,
-    beepFilePath: '#{asset_path('beep.mp3')}'
+    beepFilePath: '#{asset_path('beep.mp3')}',
+    measurementsPath: '#{measurements_path}',
   });
   function main() {
     redom.mount(document.getElementById('video-container'), app);

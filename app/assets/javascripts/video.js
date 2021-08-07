@@ -392,6 +392,7 @@ class VideoCap {
             document.getElementById('video-container').style.display = 'none';
             document.getElementById('user-graph-container').style.display = 'block';
             new Audio(this.options.beepFilePath).play();
+            setTimeout(() => { window.location.href = this.options.measurementsPath }, 5000);
           }
         } else {
           this.elError.style.display = 'block';
