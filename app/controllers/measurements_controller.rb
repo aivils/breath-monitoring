@@ -29,7 +29,7 @@ class MeasurementsController < ApplicationController
     authorize(:measurement)
     @measurement = resource_scope.find(params[:id])
     @measurement.update_attributes(update_params)
-    rendr json: @measurement.to_front_end
+    render json: @measurement.to_front_end
   end
 
   private
