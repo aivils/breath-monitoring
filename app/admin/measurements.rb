@@ -31,7 +31,9 @@ ActiveAdmin.register Measurement do
       row :c19_host
       row :approved
       row :processed
-      row :c19_probability
+      row 'ANS Health Deficit' do |record|
+        record.c19_probability
+      end
       row :data_window_start
       row :data_window_end
       row :graph do |record|
