@@ -16,6 +16,7 @@ class Measurement < ApplicationRecord
   end
   scope :c19_host, -> { where(c19_host: true) }
   scope :latest, -> { order('created_at DESC') }
+  scope :oldest, -> { order('created_at ASC') }
 
   def data_file=(tmp_file)
     tmp_file.rewind
