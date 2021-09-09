@@ -10,12 +10,16 @@
           %th.fw6.tl.pa3.bg-white
             ANShealth
           %th.fw6.tl.pa3.bg-white
+            Code
+          %th.fw6.tl.pa3.bg-white
             Created at
       %tbody.lh-copy
         - @measurements.each do |measurement|
           %tr.stripe-dark
             %td.pa3
               = measurement.c19_probability
+            %td.pa3
+              = measurement.code
             %td.pa3
               = l(measurement.created_at, format: :short)
     .w-100
