@@ -211,6 +211,7 @@ class VideoCap {
   constructor(options) {
     //console.log('VideoCap', options);
     this.options = options;
+    this.modeGraphAfterSave = this.options.recordMode == 'graph_after_save';
     this.el = el('.relative.flex.justify-center.items-center', [
       this.elShowCode = el('.absolute', {style: {display: 'none', "min-width": '200px', top: '-30px'}}),
       this.elVideo = el('video', {controls:true, style:{display:'none'}}),
@@ -260,7 +261,6 @@ class VideoCap {
     // this.elFile.addEventListener('change', this.fileChange, false);
     this.elPause.addEventListener('click', this.togglePause);
     this.elCodeForm.addEventListener('submit', this.handleSubmitCodeForm);
-    this.modeGraphAfterSave = this.options.recordMode == 'graph_after_save';
   }
   onmount() {
     //console.log('VideoCap.onmount');
@@ -356,7 +356,12 @@ class VideoCap {
     cancelAnimationFrame(this.rafID);
     this.elVideo.currentTime = 0;
     this.elPause.textContent = 'Start';
-    this.elSave.style.display = 'block';
+    if (this.modeGraphAfterSave) {
+      this.elPause.textContent = 'Restart';
+    } else {
+      this.elPause.textContent = 'Start';
+      this.elSave.style.display = 'block';
+    }
   }
   videoEnded = (evt) => {
     //console.log('videoEnded');
