@@ -259,7 +259,7 @@ class VideoCap {
     this.elVideo.addEventListener('ended',this.videoEnded,false);
     this.elSave.addEventListener('click',this.saveClick,false);
     // this.elFile.addEventListener('change', this.fileChange, false);
-    this.elPause.addEventListener('click', this.togglePause);
+    this.elPause.addEventListener('click', this.modeGraphAfterSave ? this.videoRestart : this.togglePause);
     this.elCodeForm.addEventListener('submit', this.handleSubmitCodeForm);
   }
   onmount() {
@@ -347,7 +347,7 @@ class VideoCap {
     this.lastFrameTime = 0;
     this.fdata = [];
     this.data = [];
-    this.elPause.textContent = 'Pause';
+    this.elPause.textContent = this.modeGraphAfterSave ? 'Restart' : 'Pause';
     //note: video.timeupdate is not deterministic - requestAnimationFrame is better
     this.rafID = requestAnimationFrame(this.onFrame.bind(this));
   }
@@ -549,6 +549,11 @@ class VideoCap {
       this.elSelectVideoDevice.style.display = 'block';
     }
     return false;
+  }
+
+  videoRestart = (evt) => {
+    this.elVideo.pause();
+    this.elVideo.play();
   }
 }
 
