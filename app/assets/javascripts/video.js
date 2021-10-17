@@ -211,7 +211,7 @@ class VideoCap {
   constructor(options) {
     //console.log('VideoCap', options);
     this.options = options;
-    this.modeGraphAfterSave = this.options.recordMode == 'graph_after_save';
+    this.modeLimited120sec = this.options.recordMode == 'limited_120sec';
     this.el = el('.relative.flex.justify-center.items-center', [
       this.elShowCode = el('.absolute', {style: {display: 'none', "min-width": '200px', top: '-30px'}}),
       this.elVideo = el('video', {controls:true, style:{display:'none'}}),
@@ -259,7 +259,7 @@ class VideoCap {
     this.elVideo.addEventListener('ended',this.videoEnded,false);
     this.elSave.addEventListener('click',this.saveClick,false);
     // this.elFile.addEventListener('change', this.fileChange, false);
-    this.elPause.addEventListener('click', this.modeGraphAfterSave ? this.videoRestart : this.togglePause);
+    this.elPause.addEventListener('click', this.modeLimited120sec ? this.videoRestart : this.togglePause);
     this.elCodeForm.addEventListener('submit', this.handleSubmitCodeForm);
   }
   onmount() {
@@ -347,7 +347,7 @@ class VideoCap {
     this.lastFrameTime = 0;
     this.fdata = [];
     this.data = [];
-    this.elPause.textContent = this.modeGraphAfterSave ? 'Restart' : 'Pause';
+    this.elPause.textContent = this.modeLimited120sec ? 'Restart' : 'Pause';
     //note: video.timeupdate is not deterministic - requestAnimationFrame is better
     this.rafID = requestAnimationFrame(this.onFrame.bind(this));
   }
@@ -356,7 +356,7 @@ class VideoCap {
     cancelAnimationFrame(this.rafID);
     this.elVideo.currentTime = 0;
     this.elPause.textContent = 'Start';
-    if (this.modeGraphAfterSave) {
+    if (this.modeLimited120sec) {
       this.elPause.textContent = 'Restart';
     } else {
       this.elPause.textContent = 'Start';
@@ -392,7 +392,7 @@ class VideoCap {
           setTimeout(() => {
             this.elSucess.style.display = 'none';
           }, 5000);
-          if (this.modeGraphAfterSave) {
+          if (this.modeLimited120sec) {
             this.stopStream();
             document.getElementById('video-container').style.display = 'none';
             document.getElementById('user-graph-container').style.display = 'block';
@@ -519,7 +519,7 @@ class VideoCap {
         this.elStatus.innerText = hhmmss(Math.round(elapsedTime));
         BreathMonit.send({t: elapsedTime, c: normalized});
 
-        if (this.modeGraphAfterSave && elapsedTime >= this.options.recordLength) {
+        if (this.modeLimited120sec && elapsedTime >= this.options.recordLength) {
           this.elVideo.pause();
           this.handleSave({});
         }
