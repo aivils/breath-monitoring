@@ -5,11 +5,11 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-  has_many :measurements
+  has_many :measurements, dependent: :destroy
   has_and_belongs_to_many :roles
-  has_many :doctor_patients, foreign_key: :doctor_id
+  has_many :doctor_patients, foreign_key: :doctor_id, dependent: :destroy
   has_many :patients, through: :doctor_patients
-  has_many :patient_doctors, class_name: 'DoctorPatient', foreign_key: :patient_id
+  has_many :patient_doctors, class_name: 'DoctorPatient', foreign_key: :patient_id, dependent: :destroy
   has_many :doctors, through: :patient_doctors
   has_one :profile
 
