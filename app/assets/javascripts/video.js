@@ -218,7 +218,7 @@ class VideoCap {
       //this.elVideo = el('video', {src:'test.mkv', style:{display:'none'}}),
       this.elGraph = el('canvas.absolute.self-start.w-100.h3.bg-black.o-70', {style:{display:'none'}}),
       //note: not hiding Overlay/Canvas as initial size/position goes for a toss then
-      this.elOverlayCanvas = el('canvas.absolute'),
+      this.elOverlayCanvas = el('canvas.absolute', {width: this.options.w, height: this.options.h}),
       this.elOverlay = new Overlay({
         moveResizeEl: this.elOverlayCanvas,
         x:this.options.x,
@@ -230,6 +230,9 @@ class VideoCap {
       this.topBar = el('.absolute.self-start.sans-serif.f5.pa1.bg-orange.white', {style:{display:'none'}},
         [this.elStatus = el('span.pointer.ba'),
          this.elPause = el('span.pointer.ba.ml2', {style:{display:'none'}}, 'Pause'),
+         this.elOverlayOrientation = el('span.pointer.ba', {style:{display:'none'}}, [
+           el('i.fas.fa-retweet', {})
+         ]),
          this.elSave = el('span.pointer.ba', {style:{display:'none'}}, 'Save'),
          this.elSucess = el('span.pointer.ba', {style:{display:'none'}}, 'Successfully uploaded'),
          this.elError = el('span.pointer.ba.bg-red', {style:{display:'none'}}),
@@ -261,6 +264,7 @@ class VideoCap {
     // this.elFile.addEventListener('change', this.fileChange, false);
     this.elPause.addEventListener('click', this.modeLimited120sec ? this.videoRestart : this.togglePause);
     this.elCodeForm.addEventListener('submit', this.handleSubmitCodeForm);
+    this.elOverlayOrientation.addEventListener('click',this.overlayOrientation,false);
   }
   onmount() {
     //console.log('VideoCap.onmount');
@@ -332,6 +336,7 @@ class VideoCap {
     this.elGraph.style.display = 'block';
     this.topBar.style.display = 'initial';
     this.elPause.style.display = 'initial';
+    this.elOverlayOrientation.style.display = 'initial';
     //cant do this in mount as display is none
     this.overlayX = this.elOverlay.el.offsetLeft;
     this.overlayY = this.elOverlay.el.offsetTop;
@@ -420,6 +425,29 @@ class VideoCap {
     this.overlayX = evt.x;
     this.overlayY = evt.y;
   }
+  overlayOrientation = (evt) => {
+    const newWidth = this.elOverlay.el.style.height;
+    const newHeight = this.elOverlay.el.style.width;
+    this.elOverlay.el.style.width = newWidth;
+    this.elOverlay.el.style.height = newHeight;
+    this.elOverlay.resize({});
+  }
+  overlayState = (ctxOverlay) => {
+    const vertical = this.elOverlayCanvas.height > this.elOverlayCanvas.width;
+    const halfHeight = Math.round(this.elOverlayCanvas.height/2);
+    const halfWidth = Math.round(this.elOverlayCanvas.width/2);
+    const upperRgba = vertical ? ctxOverlay.getImageData(0, 0, this.elOverlayCanvas.width, halfHeight) :
+      ctxOverlay.getImageData(0, 0, halfWidth, this.elOverlayCanvas.height);
+    const upperGcount = this.calculateGrayscale(upperRgba);
+    const lowerRgba = vertical ? ctxOverlay.getImageData(0, halfHeight, this.elOverlayCanvas.width, halfHeight) :
+      ctxOverlay.getImageData(halfWidth, 0, halfWidth, this.elOverlayCanvas.height);
+    const lowerGcount = this.calculateGrayscale(lowerRgba);
+    if (upperGcount > lowerGcount) {
+      this.elOverlay.stateAlert();
+    } else {
+      this.elOverlay.stateNormal();
+    }
+  }
   updateGraph = (value) => {
     if (!this.ctxGraph) {
       this.ctxGraph = this.elGraph.getContext('2d');
@@ -445,6 +473,27 @@ class VideoCap {
     });
     ctx.stroke();
   }
+  calculateGrayscale = (rgba) => {
+    // grayscale magic-numbers change as reqd.
+    //from http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html
+    //const rgb2gs = [0.2125, 0.7154, 0.0721];
+    const rgb2gs = [0.299, 0.587, 0.114];
+    let gcount = 0;
+    for (let i = 0; i < rgba.data.length; i += 4) {
+      let mono = (rgba.data[i] * rgb2gs[0]) + (rgba.data[i+1] * rgb2gs[1]) + (rgba.data[i+1] * rgb2gs[2]);
+      //convert mono into bw and count white pixels
+      if (mono < this.options.gmax) {
+        gcount++;
+        mono = 0;
+      } else {
+        mono = 255;
+      }
+      rgba.data[i] = mono;
+      rgba.data[i+1] = mono;
+      rgba.data[i+2] = mono;
+    }
+    return gcount;
+  }
   onFrame(timestamp) {
     //console.log('onFrame', timestamp);
     //if no processing is done - this would be about 60 fps
@@ -467,40 +516,10 @@ class VideoCap {
         0, 0,
         this.elOverlayCanvas.width, this.elOverlayCanvas.height);
 
-      const calculateGrayscale = (rgba) => {
-        // grayscale magic-numbers change as reqd.
-        //from http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html
-        //const rgb2gs = [0.2125, 0.7154, 0.0721];
-        const rgb2gs = [0.299, 0.587, 0.114];
-        let gcount = 0;
-        for (let i = 0; i < rgba.data.length; i += 4) {
-          let mono = (rgba.data[i] * rgb2gs[0]) + (rgba.data[i+1] * rgb2gs[1]) + (rgba.data[i+1] * rgb2gs[2]);
-          //convert mono into bw and count white pixels
-          if (mono < this.options.gmax) {
-            gcount++;
-            mono = 0;
-          } else {
-            mono = 255;
-          }
-          rgba.data[i] = mono;
-          rgba.data[i+1] = mono;
-          rgba.data[i+2] = mono;
-        }
-        return gcount;
-      }
-      const halfHeight = Math.round(this.elOverlayCanvas.height/2);
-      const upperRgba = ctxOverlay.getImageData(0, 0, this.elOverlayCanvas.width, halfHeight);
-      const upperGcount = calculateGrayscale(upperRgba);
-      const lowerRgba = ctxOverlay.getImageData(0, halfHeight, this.elOverlayCanvas.width, halfHeight);
-      const lowerGcount = calculateGrayscale(lowerRgba);
+      this.overlayState(ctxOverlay);
       // get the imageData from OffScreenCanvas
       const rgba = ctxOverlay.getImageData(0, 0, this.elOverlayCanvas.width, this.elOverlayCanvas.height);
-      const gcount = calculateGrayscale(rgba);
-      if (upperGcount > lowerGcount) {
-        this.elOverlay.stateAlert();
-      } else {
-        this.elOverlay.stateNormal();
-      }
+      const gcount = this.calculateGrayscale(rgba);
 
       // draw modified Image on overlayCanvas
       ctxOverlay.putImageData(rgba, 0, 0);
