@@ -230,7 +230,7 @@ class VideoCap {
       this.topBar = el('.absolute.self-start.sans-serif.f5.pa1.bg-orange.white', {style:{display:'none'}},
         [this.elStatus = el('span.pointer.ba'),
          this.elPause = el('span.pointer.ba.ml2', {style:{display:'none'}}, 'Pause'),
-         this.elOverlayOrientation = el('span.pointer.ba', {style:{display:'none'}}, [
+         this.elOverlayOrientation = el('span.pointer.ba.ml2', {style:{display:'none'}}, [
            el('i.fas.fa-retweet', {})
          ]),
          this.elSave = el('span.pointer.ba', {style:{display:'none'}}, 'Save'),
