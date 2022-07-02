@@ -13,7 +13,7 @@ window.BreathMonit = (function() {
   var receiveStopped = false;
   var periodogram;
   var periodogramTime;
-  var UPDATE_PERIODOGRAM = 3; /* every x seconds */
+  var UPDATE_PERIODOGRAM = 0.5; /* every x seconds */
 
   var calculatePeriodogram = function() {
     var signal = graphData.map((x) => x[1]);
