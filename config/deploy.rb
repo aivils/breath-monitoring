@@ -1,6 +1,6 @@
 # config valid for current version and patch releases of Capistrano
-lock "~> 3.14.0"
-set :rvm_ruby_version, '2.6.5'
+lock "~> 3.17.0"
+set :rvm_ruby_version, '2.7.7'
 
 set :application, "breath_mon"
 set :repo_url, "file:///home/rails/repo/"
