@@ -415,7 +415,11 @@ class VideoCap {
     }
   }
   overlayResize = (evt) => {
-    //console.log('overlayResize', evt);
+    // console.log('overlayResize', evt);
+    if (isNaN(evt.width) || isNaN(evt.height)) {
+      return;
+    }
+
     this.elOverlayCanvas.width = evt.width;
     this.elOverlayCanvas.height = evt.height;
     this.gsize = evt.width * evt.height;
