@@ -1,6 +1,6 @@
 //= require rails-ujs
 //= require redom
-//= require action_cable
+//= require actioncable
 //= require dygraph
 
 //= require video
