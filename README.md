@@ -11,6 +11,13 @@ This project is intended for remote measurement of the client's respiratory proc
 The system often does not have this version of ruby. So the easiest way to install the required version of ruby is to install Ruby Version Manager.
 https://rvm.io/rvm/install
 
+- 2.7.7
+
+```
+rvm pkg install openssl
+rvm install 2.7.7  --with-openssl-dir=$HOME/.rvm/usr --autolibs=0
+```
+
 * Ruby on Rails
 
 - 6.0.2.2
@@ -28,9 +35,22 @@ bundle install
 
 * Database creation
 
+## Ubuntu 22 LTS
+
+```
+apt install mariadb-server
+apt install libmariadb-dev
+```
+
 ```
 rake db:create
 rake db:migrate
+```
+
+```
+CREATE USER 'rdeveloper'@'localhost' IDENTIFIED BY 'rdeveloper';
+CREATE DATABASE breath_development;
+GRANT ALL PRIVILEGES ON breath_development.* TO 'rdeveloper'@'localhost';
 ```
 
 * Database initialization
@@ -54,5 +74,14 @@ cap production deploy
 
 ```
 bundle exec rails s
+```
+
+## Admin user
+
+```
+$ bundle exec rails c
+Loading development environment (Rails 6.0.6.1)
+2.7.7 :001 > role = Role.find_by(name: "Admin")
+2.7.7 :001 > user = User.create(email: 'admin@a.lv', role_ids: [role.id], password: '12345678', password_confirmation: '12345678')
 ```
 
