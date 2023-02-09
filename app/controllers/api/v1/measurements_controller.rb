@@ -14,7 +14,7 @@ module Api
 
       def update
         measurement = resource_scope.find(params[:id])
-        measurement.update_attributes(update_params)
+        measurement.update(update_params)
         respond_with(measurement)
       end
 
