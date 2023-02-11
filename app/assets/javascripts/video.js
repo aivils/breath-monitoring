@@ -216,6 +216,7 @@ class VideoCap {
       this.elShowCode = el('.absolute', {style: {display: 'none', "min-width": '200px', top: '-30px'}}),
       this.elVideo = el('video', {controls:true, style:{display:'none'}}),
       //this.elVideo = el('video', {src:'test.mkv', style:{display:'none'}}),
+      this.elTapControl = el('.absolute.w-100.h-100', {style:{display:'none'}}),
       this.elGraph = el('canvas.absolute.self-start.w-100.h3.bg-black.o-70', {style:{display:'none'}}),
       //note: not hiding Overlay/Canvas as initial size/position goes for a toss then
       this.elOverlayCanvas = el('canvas.absolute', {width: this.options.w, height: this.options.h}),
@@ -260,6 +261,7 @@ class VideoCap {
     this.elVideo.addEventListener('play',this.videoPlay,false);
     this.elVideo.addEventListener('pause',this.videoPause,false);
     this.elVideo.addEventListener('ended',this.videoEnded,false);
+    this.elTapControl.addEventListener('click',this.moveOverlayByTap,false);
     this.elSave.addEventListener('click',this.saveClick,false);
     // this.elFile.addEventListener('change', this.fileChange, false);
     this.elPause.addEventListener('click', this.modeLimited120sec ? this.videoRestart : this.togglePause);
@@ -326,22 +328,18 @@ class VideoCap {
     // this.elVideo.style.height = 'auto';
     this.videoScaleX = this.elVideo.clientWidth / this.elVideo.videoWidth;
     this.videoScaleY = this.elVideo.clientHeight / this.elVideo.videoHeight;
-    const offsetLeft = Math.floor(this.elVideo.clientWidth/2 - this.options.w/2);
-    const offsetTop = Math.floor(this.elVideo.clientHeight/2 - this.options.h/2);
-    this.elOverlay.el.style.left = offsetLeft + 'px';
-    this.elOverlay.el.style.top = offsetTop + 'px';
     this.elVideo.style.display = 'block';
+    this.elTapControl.style.display = 'block';
     this.elOverlayCanvas.style.display = 'block';
     this.elOverlay.el.style.display = 'block';
     this.elGraph.style.display = 'block';
     this.topBar.style.display = 'initial';
     this.elPause.style.display = 'initial';
     this.elOverlayOrientation.style.display = 'initial';
+    const offsetLeft = Math.floor(this.elVideo.clientWidth/2 - this.options.w/2);
+    const offsetTop = Math.floor(this.elVideo.clientHeight/2 - this.options.h/2);
     //cant do this in mount as display is none
-    this.overlayX = this.elOverlay.el.offsetLeft;
-    this.overlayY = this.elOverlay.el.offsetTop;
-    this.elOverlayCanvas.style.left = this.overlayX + 'px';
-    this.elOverlayCanvas.style.top = this.overlayY + 'px';
+    this.setOverlayOffset(offsetLeft, offsetTop)
     //since canvas width/height are set style.width/height is not needed
   }
   videoPlay = (evt) => {
@@ -413,6 +411,17 @@ class VideoCap {
         this.elError.textContent = `Save failed: ${JSON.stringify(err)}`;
       });
     }
+  }
+  setOverlayOffset = (offsetX, offsetY) => {
+    this.elOverlay.el.style.left = offsetX + 'px';
+    this.elOverlay.el.style.top = offsetY + 'px';
+    this.overlayX = this.elOverlay.el.offsetLeft;
+    this.overlayY = this.elOverlay.el.offsetTop;
+    this.elOverlayCanvas.style.left = this.overlayX + 'px';
+    this.elOverlayCanvas.style.top = this.overlayY + 'px';
+  }
+  moveOverlayByTap = (evt) => {
+    this.setOverlayOffset(evt.offsetX, evt.offsetY);
   }
   overlayResize = (evt) => {
     // console.log('overlayResize', evt);
