@@ -421,7 +421,11 @@ class VideoCap {
     this.elOverlayCanvas.style.top = this.overlayY + 'px';
   }
   moveOverlayByTap = (evt) => {
-    this.setOverlayOffset(evt.offsetX, evt.offsetY);
+    const offsetX = evt.offsetX - this.elOverlay.el.offsetWidth/2;
+    const offsetY = evt.offsetY - this.elOverlay.el.offsetHeight/2;
+    this.setOverlayOffset(offsetX, offsetY);
+    this.videoPause({});
+    this.videoPlay({});
   }
   overlayResize = (evt) => {
     // console.log('overlayResize', evt);
