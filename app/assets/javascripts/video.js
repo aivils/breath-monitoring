@@ -341,6 +341,11 @@ class VideoCap {
     //cant do this in mount as display is none
     this.setOverlayOffset(offsetLeft, offsetTop)
     //since canvas width/height are set style.width/height is not needed
+    if (this.options.voiceControl) {
+      this.elStatus.innerText = '00';
+      this.videoPause({});
+      this.voiceControl = new VoiceControl({ VideoCap: this });
+    }
   }
   videoPlay = (evt) => {
     //this.elStatus.innerText = 'Capturing...';
@@ -359,7 +364,9 @@ class VideoCap {
     cancelAnimationFrame(this.rafID);
     this.elVideo.currentTime = 0;
     this.elPause.textContent = 'Start';
-    if (this.modeLimited120sec) {
+    if (this.options.voiceControl) {
+      this.elPause.textContent = 'Tell Okay to start';
+    } else if (this.modeLimited120sec) {
       this.elPause.textContent = 'Restart';
     } else {
       this.elPause.textContent = 'Start';

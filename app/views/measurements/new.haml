@@ -14,6 +14,7 @@
   const app = new App({
     savePath: '#{measurements_path}',
     recordMode: '#{current_user.profile.record_mode}',
+    voiceControl: #{current_user.profile.voice_control},
     recordLength: 120,
     recordDataWindowLength: 64,
     beepFilePath: '#{asset_path('beep.mp3')}',
