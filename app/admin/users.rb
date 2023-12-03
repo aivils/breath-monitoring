@@ -29,6 +29,7 @@ ActiveAdmin.register User do
             pf.input :id, as: :hidden
             pf.input :display_time, as: :select, collection: User::Profile::DISPLAY_TIMES
             pf.input :record_mode, as: :select, collectio: User::Profile::RECORD_MODES
+            pf.input :voice_control
           end
         end
       end
@@ -54,6 +55,9 @@ ActiveAdmin.register User do
       row :record_mode do |user|
         user.profile.record_mode
       end
+      row :voice_control do |user|
+        user.profile.voice_control
+      end
       row :roles
       row :patients
       row :doctors
@@ -67,5 +71,6 @@ ActiveAdmin.register User do
       :id,
       :display_time,
       :record_mode,
+      :voice_control,
     ]
 end
