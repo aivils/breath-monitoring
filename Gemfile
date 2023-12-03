@@ -5,7 +5,7 @@ ruby '2.7.7'
 
 gem 'rails', '~> 7.0', '>= 7.0.8'
 gem 'mysql2'
-gem 'puma', '~> 6.0'
+gem 'puma', '~> 6.4'
 gem 'sass-rails', '>= 6'
 #gem 'webpacker', '~> 4.0'
 gem 'bootsnap', '>= 1.4.2', require: false
