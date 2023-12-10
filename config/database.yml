@@ -27,3 +27,4 @@ test:
 production:
   <<: *default
   database: breath_production
+  host: mysql
