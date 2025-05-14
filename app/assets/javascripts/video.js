@@ -214,7 +214,13 @@ class VideoCap {
     this.modeLimited120sec = this.options.recordMode == 'limited_120sec';
     this.el = el('.relative.flex.justify-center.items-center', [
       this.elShowCode = el('.absolute', {style: {display: 'none', "min-width": '200px', top: '-30px'}}),
-      this.elVideo = el('video', {controls:true, style:{display:'none'}}),
+      this.elVideo = el('video', {
+        controls:true,
+        style:{display:'none'},
+        playsinline: true,
+        'webkit-playsinline': true,
+        muted: true,
+      }),
       //this.elVideo = el('video', {src:'test.mkv', style:{display:'none'}}),
       this.elTapControl = el('.absolute.w-100.h-100', {style:{display:'none'}}),
       this.elGraph = el('canvas.absolute.self-start.w-100.h3.bg-black.o-70', {style:{display:'none'}}),
