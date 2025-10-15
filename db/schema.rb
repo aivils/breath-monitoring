@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_12_03_095250) do
+ActiveRecord::Schema[7.0].define(version: 2025_10_15_130445) do
   create_table "active_admin_comments", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
@@ -46,6 +46,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_03_095250) do
     t.float "data_window_end"
     t.integer "c19_probability"
     t.boolean "c19_host"
+    t.integer "spi_score"
+    t.integer "asdi_score"
     t.index ["approved"], name: "index_measurements_on_approved"
     t.index ["processed"], name: "index_measurements_on_processed"
     t.index ["user_id"], name: "index_measurements_on_user_id"

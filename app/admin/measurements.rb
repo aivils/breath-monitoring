@@ -34,6 +34,12 @@ ActiveAdmin.register Measurement do
       row 'ANS Health Deficit' do |record|
         record.c19_probability
       end
+      row 'Seizure Proclivity Index' do |record|
+        record.spi_score
+      end
+      row 'Autism Severity & Dysregulation Index' do |record|
+        record.asdi_score
+      end
       row :data_window_start
       row :data_window_end
       row :graph do |record|

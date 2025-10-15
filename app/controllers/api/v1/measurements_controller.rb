@@ -25,7 +25,7 @@ module Api
       end
 
       def update_params
-        params.require(:measurement).permit(:processed, :c19_probability)
+        params.require(:measurement).permit(:processed, :c19_probability, :spi_score, :asdi_score)
       end
     end
   end

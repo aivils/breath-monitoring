@@ -4,3 +4,9 @@
 body {
   font-size: 95%;
 }
+
+form fieldset > ol > li.boolean::after {
+  content: "";
+  display: block;
+  clear: both;
+}
