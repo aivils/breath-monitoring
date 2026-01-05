@@ -3,8 +3,8 @@ class Measurement < ApplicationRecord
 
   belongs_to :user
 
-  validates :spi_score, numericality: { in: 0..10 }, allow_nil: true
-  validates :asdi_score, numericality: { in: 0..100 }, allow_nil: true
+  #validates :spi_score, numericality: { in: 0..10 }, allow_nil: true
+  #validates :asdi_score, numericality: { in: 0..100 }, allow_nil: true
 
   scope :approved, -> { where(approved: true) }
   scope :processed, -> { where(processed: true) }
