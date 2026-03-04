@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_10_15_130445) do
+ActiveRecord::Schema[7.0].define(version: 2026_03_04_074419) do
   create_table "active_admin_comments", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
@@ -74,6 +74,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_10_15_130445) do
     t.string "code"
     t.integer "record_mode", default: 0
     t.boolean "voice_control", default: false
+    t.integer "frames_per_second", default: 15
     t.index ["user_id"], name: "index_user_profiles_on_user_id"
   end
 

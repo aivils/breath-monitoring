@@ -27,9 +27,10 @@ ActiveAdmin.register User do
           f.input :apikey
           f.has_many :profile, new_record: false do |pf|
             pf.input :id, as: :hidden
-            pf.input :display_time, as: :select, collection: User::Profile::DISPLAY_TIMES
-            pf.input :record_mode, as: :select, collectio: User::Profile::RECORD_MODES
+            pf.input :display_time, as: :select, collection: User::Profile::DISPLAY_TIMES, include_blank: false
+            pf.input :record_mode, as: :select, collectio: User::Profile::RECORD_MODES, include_blank: false
             pf.input :voice_control
+            pf.input :frames_per_second, as: :select, collection: User::Profile::FRAMES_PER_SECOND_MODES, include_blank: false
           end
         end
       end
@@ -58,6 +59,9 @@ ActiveAdmin.register User do
       row :voice_control do |user|
         user.profile.voice_control
       end
+      row :frames_per_second do |user|
+        user.profile.frames_per_second
+      end
       row :roles
       row :patients
       row :doctors
@@ -72,5 +76,6 @@ ActiveAdmin.register User do
       :display_time,
       :record_mode,
       :voice_control,
+      :frames_per_second,
     ]
 end

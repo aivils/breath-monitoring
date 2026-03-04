@@ -624,8 +624,7 @@ class App {
       if (h <= 0) {
         h = (w > 0) ? w : 0;
       }
-      let fps = parseInt(urlParams.get('fps') || '15') || 15;
-      fps = ((fps > 0) && (fps <= 30)) ? fps : 15;
+      let fps = parseInt(options.framesPerSecond || '15') || 15;
       let gmax = parseInt(urlParams.get('gmax') || '126') || 126;
       gmax = ((gmax >= 0) && (gmax <= 255)) ? gmax : 126;
 

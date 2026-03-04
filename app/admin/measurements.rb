@@ -45,6 +45,9 @@ ActiveAdmin.register Measurement do
       row :graph do |record|
         render 'admin/measurements/graph', { measurement: record }
       end
+      row :frames_per_second do |record|
+        number_with_precision(record.frames_per_second, precision: 2)
+      end
       row :data do |record|
         record.data.gsub("\n", '</br>').html_safe
       end

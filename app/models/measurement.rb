@@ -44,4 +44,16 @@ class Measurement < ApplicationRecord
       item
     end
   end
+
+  def frames_per_second
+    parsed = data_parsed
+    return 0 if parsed.blank?
+
+    first_t = parsed.first[0]
+    last_t  = parsed.last[0]
+    duration = last_t - first_t
+    return 0 if duration <= 0
+
+    parsed.length / duration
+  end
 end
