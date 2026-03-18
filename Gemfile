@@ -19,7 +19,7 @@ gem 'recaptcha'
 gem 'dotenv-rails'
 gem 'kaminari'
 
-gem 'foreman', '0.87.1', require: false
+gem 'foreman', '0.90.0', require: false
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
