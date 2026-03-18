@@ -28,10 +28,15 @@ Rails.application.routes.draw do
       resources :measurements, only: [:index, :show, :update]
     end
     namespace :v2 do
-      devise_scope :user do
-        post   'login',  to: 'sessions#create'
-        delete 'logout', to: 'sessions#destroy'
-      end
+      devise_for :users,
+                 path: '',
+                 path_names: {
+                   sign_in: 'login',
+                   sign_out: 'logout'
+                 },
+                 controllers: {
+                   sessions: 'api/v2/sessions'
+                 }
 
       resources :measurements, only: [:index, :show, :update]
     end

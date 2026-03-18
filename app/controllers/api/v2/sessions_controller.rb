@@ -25,6 +25,10 @@ module Api
           }
         }, status: :ok
       end
+
+      def devise_mapping
+        @devise_mapping ||= Devise.mappings[:user]
+      end
     end
   end
 end
