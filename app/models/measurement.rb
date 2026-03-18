@@ -56,4 +56,30 @@ class Measurement < ApplicationRecord
 
     parsed.length / duration
   end
+
+  class << self
+    def ransackable_attributes(auth_object = nil)
+      %w[
+        id
+        user_id
+        code
+        approved
+        processed
+        c19_host
+        created_at
+        updated_at
+        data_window_start
+        data_window_end
+        frames_per_second
+      ]
+    end
+
+    def ransortable_attributes(auth_object = nil)
+      ransackable_attributes(auth_object)
+    end
+
+    def ransackable_associations(auth_object = nil)
+      %w[user]
+    end
+  end
 end

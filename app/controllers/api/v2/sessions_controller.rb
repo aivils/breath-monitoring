@@ -4,6 +4,16 @@ module Api
       respond_to :json
       skip_forgery_protection
 
+      def destroy
+        signed_out = (Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name))
+
+        if signed_out
+          render json: { message: 'Logged out successfully.' }, status: :ok
+        else
+          render json: { message: 'No active session.' }, status: :unauthorized
+        end
+      end
+
       private
 
       def respond_with(resource, _opts = {})

@@ -1,13 +1,20 @@
 class ApplicationController < ActionController::Base
-  include Pundit
-  after_action :verify_authorized, except: :index, unless: :no_pundit_controller?
-  after_action :verify_policy_scoped, only: :index, unless: :no_pundit_controller?
+  include Pundit::Authorization
+  after_action :verify_pundit_authorization, unless: :no_pundit_controller?
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
+  def verify_pundit_authorization
+    if action_name == "index"
+      verify_policy_scoped
+    else
+      verify_authorized
+    end
+  end
+
   def no_pundit_controller?
     is_a?(ActiveAdmin::BaseController) ||
-      is_a?(DeviseController) ||
+      devise_controller? ||
       is_a?(Api::V1::ApiController) ||
       is_a?(Api::V2::ApiController)
   end

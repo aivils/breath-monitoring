@@ -26,6 +26,7 @@ class User < ApplicationRecord
     roles.admin.any?
   end
 
+
   protected
 
   def password_required?
@@ -36,5 +37,29 @@ class User < ApplicationRecord
 
   def make_profile
     !profile && create_profile!
+  end
+
+  class << self
+    def ransackable_attributes(auth_object = nil)
+      %w[
+        id
+        email
+        created_at
+        patients_count
+      ]
+    end
+
+    def ransortable_attributes(auth_object = nil)
+      ransackable_attributes(auth_object)
+    end
+
+    def ransackable_associations(auth_object = nil)
+      %w[
+        profile
+        roles
+        patients
+        doctors
+      ]
+    end
   end
 end

@@ -28,7 +28,7 @@ ActiveAdmin.register User do
           f.has_many :profile, new_record: false do |pf|
             pf.input :id, as: :hidden
             pf.input :display_time, as: :select, collection: User::Profile::DISPLAY_TIMES, include_blank: false
-            pf.input :record_mode, as: :select, collectio: User::Profile::RECORD_MODES, include_blank: false
+            pf.input :record_mode, as: :select, collection: User::Profile::RECORD_MODES, include_blank: false
             pf.input :voice_control
             pf.input :frames_per_second, as: :select, collection: User::Profile::FRAMES_PER_SECOND_MODES, include_blank: false
           end

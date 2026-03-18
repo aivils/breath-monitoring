@@ -101,7 +101,8 @@ RSpec.describe 'Api::V2::Sessions', type: :request do
 
         delete path, headers: { 'Authorization' => token }, as: :json
 
-        expect(response).to have_http_status(:no_content)
+        expect(response).to have_http_status(:ok)
+        expect(json['message']).to eq('Logged out successfully.')
       end
     end
 
@@ -109,7 +110,7 @@ RSpec.describe 'Api::V2::Sessions', type: :request do
       it 'returns no_content' do
         delete path, as: :json
 
-        expect(response).to have_http_status(:no_content)
+        expect(response).to have_http_status(:unauthorized)
       end
     end
   end

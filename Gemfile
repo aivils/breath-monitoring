@@ -1,9 +1,9 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.7.7'
+ruby '3.2.9'
 
-gem 'rails', '~> 7.0', '>= 7.0.8'
+gem 'rails', '~> 7.2', '>= 7.2.3'
 gem 'mysql2'
 gem 'puma', '~> 6.4'
 gem 'sass-rails', '>= 6'
@@ -13,7 +13,7 @@ gem 'haml-rails', '~> 2.0'
 gem 'devise'
 gem 'devise-jwt'
 gem 'pundit'
-gem 'activeadmin'
+gem 'activeadmin', '>= 3.2'
 gem 'redis'
 gem 'recaptcha'
 gem 'dotenv-rails'
@@ -40,9 +40,6 @@ group :development do
 end
 
 group :test do
-  gem 'capybara', '>= 2.15'
-  gem 'selenium-webdriver'
-  gem 'webdrivers'
   gem 'database_cleaner-active_record'
 end
 
