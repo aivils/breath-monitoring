@@ -27,6 +27,9 @@ group :development, :test do
   gem 'capistrano-bundler', '~> 1.6', require: false
   gem 'capistrano-rvm', '~> 0.1', require: false
   gem "capistrano-rails", "~> 1.5", require: false
+
+  gem 'rspec-rails', '~> 6.1'
+  gem 'factory_bot_rails'
 end
 
 group :development do
@@ -40,6 +43,7 @@ group :test do
   gem 'capybara', '>= 2.15'
   gem 'selenium-webdriver'
   gem 'webdrivers'
+  gem 'database_cleaner-active_record'
 end
 
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]

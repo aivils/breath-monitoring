@@ -114,6 +114,10 @@ GEM
     concurrent-ruby (1.2.2)
     connection_pool (2.3.0)
     crass (1.0.6)
+    database_cleaner-active_record (2.2.2)
+      activerecord (>= 5.a)
+      database_cleaner-core (~> 2.0)
+    database_cleaner-core (2.0.1)
     date (3.3.4)
     devise (4.8.1)
       bcrypt (~> 3.0)
@@ -124,6 +128,7 @@ GEM
     devise-jwt (0.13.0)
       devise (>= 4.0.0, < 6.0.0)
       warden-jwt_auth (~> 0.10)
+    diff-lcs (1.6.2)
     dockerfile-rails (1.5.14)
       rails (>= 3.0.0)
     dotenv (2.8.1)
@@ -140,6 +145,11 @@ GEM
       concurrent-ruby (~> 1.0)
       zeitwerk (~> 2.6)
     erubi (1.12.0)
+    factory_bot (6.4.5)
+      activesupport (>= 5.0.0)
+    factory_bot_rails (6.4.3)
+      factory_bot (~> 6.4)
+      railties (>= 5.0.0)
     ffi (1.16.3)
     foreman (0.87.1)
     formtastic (4.0.0)
@@ -277,6 +287,23 @@ GEM
       actionpack (>= 5.2)
       railties (>= 5.2)
     rexml (3.2.5)
+    rspec-core (3.13.6)
+      rspec-support (~> 3.13.0)
+    rspec-expectations (3.13.5)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.13.0)
+    rspec-mocks (3.13.8)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.13.0)
+    rspec-rails (6.1.5)
+      actionpack (>= 6.1)
+      activesupport (>= 6.1)
+      railties (>= 6.1)
+      rspec-core (~> 3.13)
+      rspec-expectations (~> 3.13)
+      rspec-mocks (~> 3.13)
+      rspec-support (~> 3.13)
+    rspec-support (3.13.7)
     ruby2_keywords (0.0.5)
     rubyzip (2.3.2)
     sass-rails (6.0.0)
@@ -346,10 +373,12 @@ DEPENDENCIES
   capistrano-rails (~> 1.5)
   capistrano-rvm (~> 0.1)
   capybara (>= 2.15)
+  database_cleaner-active_record
   devise
   devise-jwt
   dockerfile-rails (>= 1.5)
   dotenv-rails
+  factory_bot_rails
   foreman (= 0.87.1)
   haml-rails (~> 2.0)
   kaminari
@@ -360,6 +389,7 @@ DEPENDENCIES
   rails (~> 7.0, >= 7.0.8)
   recaptcha
   redis
+  rspec-rails (~> 6.1)
   sass-rails (>= 6)
   selenium-webdriver
   spring (~> 4.1)
