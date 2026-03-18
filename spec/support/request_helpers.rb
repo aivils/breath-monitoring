@@ -1,6 +1,6 @@
 module RequestHelpers
   def json
-    JSON.parse(response.body)
+    response.body.present? ? JSON.parse(response.body) : {}
   end
 end
 
