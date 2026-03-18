@@ -1,9 +1,9 @@
 # config valid for current version and patch releases of Capistrano
-lock "~> 3.17.0"
-set :rvm_ruby_version, '2.7.7'
+lock "~> 3.20.0"
+set :rvm_ruby_version, '3.2.9'
 
 set :application, "breath_mon"
-set :repo_url, "file:///home/rails/repo/"
+set :repo_url, "git@github.com:aivils/breath-monitoring.git"
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
