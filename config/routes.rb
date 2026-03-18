@@ -28,6 +28,11 @@ Rails.application.routes.draw do
       resources :measurements, only: [:index, :show, :update]
     end
     namespace :v2 do
+      devise_scope :user do
+        post   'login',  to: 'sessions#create'
+        delete 'logout', to: 'sessions#destroy'
+      end
+
       resources :measurements, only: [:index, :show, :update]
     end
   end

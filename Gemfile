@@ -11,6 +11,7 @@ gem 'sass-rails', '>= 6'
 gem 'bootsnap', '>= 1.4.2', require: false
 gem 'haml-rails', '~> 2.0'
 gem 'devise'
+gem 'devise-jwt'
 gem 'pundit'
 gem 'activeadmin'
 gem 'redis'

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_03_04_074419) do
+ActiveRecord::Schema[7.0].define(version: 2026_03_18_073425) do
   create_table "active_admin_comments", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
@@ -103,10 +103,12 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_04_074419) do
     t.integer "doctors_count", default: 0
     t.integer "patients_count", default: 0
     t.string "apikey"
+    t.string "jti", null: false
     t.index ["admin"], name: "index_users_on_admin"
     t.index ["apikey"], name: "index_users_on_apikey"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end

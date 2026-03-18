@@ -4,16 +4,33 @@ module Api
       respond_to :json
 
       skip_forgery_protection
-      before_action :authenticate_user
+      before_action :authenticate_api_v2_user!
 
       private
 
-      def authenticate_user
+      def authenticate_api_v2_user!
+        return if authenticate_with_jwt
+        return if authenticate_with_apikey
+
+        render json: { error: "This is not an authorized request." }, status: :unauthorized
+      end
+
+      def authenticate_with_jwt
+        self.resource = warden.authenticate(scope: :user)
+        @current_api_user = resource if resource.present?
+      end
+
+      def authenticate_with_apikey
         apikey = params[:apikey]
         @current_api_user = User.find_by(apikey: apikey) if apikey.present?
-        render json: {  error: "This is not a authorized request." },
-                      status: :unauthorized unless @current_api_user
       end
+
+      attr_accessor :resource
+
+      def current_api_user
+        @current_api_user
+      end
+      helper_method :current_api_user
     end
   end
 end
