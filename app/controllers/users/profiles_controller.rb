@@ -1,5 +1,5 @@
 class Users::ProfilesController < ApplicationController
-  skip_after_action :verify_policy_scoped, only: [ :show, :update ]
+  skip_after_action :verify_pundit_authorization, only: [ :show, :update ]
   before_action :set_profile
   respond_to :json, :html
 

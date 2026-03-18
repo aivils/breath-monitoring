@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  skip_after_action :verify_policy_scoped, only: :index
+  skip_after_action :verify_pundit_authorization, only: :index
 
   def index
     authorize :home
