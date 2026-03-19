@@ -18,6 +18,8 @@ gem 'redis'
 gem 'recaptcha'
 gem 'dotenv-rails'
 gem 'kaminari'
+gem 'rswag-api'
+gem 'rswag-ui'
 
 gem 'foreman', '0.90.0', require: false
 
@@ -31,8 +33,6 @@ group :development, :test do
   gem 'rspec-rails', '~> 6.1'
   gem 'factory_bot_rails'
   gem 'rswag-specs'
-  gem 'rswag-api'
-  gem 'rswag-ui'
 end
 
 group :development do
@@ -49,3 +49,4 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem "dockerfile-rails", ">= 1.5", :group => :development
+
