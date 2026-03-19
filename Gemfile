@@ -30,6 +30,9 @@ group :development, :test do
 
   gem 'rspec-rails', '~> 6.1'
   gem 'factory_bot_rails'
+  gem 'rswag-specs'
+  gem 'rswag-api'
+  gem 'rswag-ui'
 end
 
 group :development do

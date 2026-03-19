@@ -1,0 +1,91 @@
+---
+openapi: 3.0.1
+info:
+  title: API V2
+  version: v2
+paths:
+  "/api/v2/login":
+    post:
+      summary: Login
+      tags:
+      - Sessions
+      parameters: []
+      responses:
+        '200':
+          description: successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      email:
+                        type: string
+                    required:
+                    - id
+                    - email
+                required:
+                - message
+                - user
+        '401':
+          description: unauthorized
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                    password:
+                      type: string
+                  required:
+                  - email
+                  - password
+              required:
+              - user
+  "/api/v2/logout":
+    delete:
+      summary: Logout
+      tags:
+      - Sessions
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+        required: true
+      responses:
+        '200':
+          description: successful logout
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                required:
+                - message
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    apiKeyAuth:
+      type: apiKey
+      name: apikey
+      in: query

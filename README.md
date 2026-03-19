@@ -85,3 +85,8 @@ Loading development environment (Rails 6.0.6.1)
 2.7.7 :001 > user = User.create(email: 'admin@a.lv', role_ids: [role.id], password: '12345678', password_confirmation: '12345678')
 ```
 
+## OpenApi
+
+```
+RAILS_ENV=test bundle exec rails rswag
+```
