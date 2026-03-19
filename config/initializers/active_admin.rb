@@ -242,6 +242,7 @@ ActiveAdmin.setup do |config|
   config.namespace :admin do |admin|
     admin.build_menu :default do |menu|
       menu.add label: "Live Data", url: Rails.application.routes.url_helpers.root_path, priority: 0
+      menu.add label: "API docs", url: Rails.application.routes.url_helpers.rswag_ui_path, priority: 1
     end
   end
 

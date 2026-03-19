@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
-  mount Rswag::Api::Engine => '/api-docs'
-  mount Rswag::Ui::Engine => '/api-docs'
+  authenticate :user do
+    mount Rswag::Api::Engine => '/api-docs'
+    mount Rswag::Ui::Engine => '/api-docs'
+  end
   devise_for :users, controllers: {
     registrations: 'users/registrations',
     sessions: 'users/sessions',
@@ -40,7 +42,11 @@ Rails.application.routes.draw do
                    sessions: 'api/v2/sessions'
                  }
 
-      resources :measurements, only: [:index, :show, :update]
+      resources :measurements, only: [:index, :show, :create, :update] do
+        member do
+          patch :review
+        end
+      end
     end
   end
 end

@@ -31,6 +31,10 @@ module Api
         @current_api_user
       end
       helper_method :current_api_user
+
+      def pundit_user
+        @current_api_user
+      end
     end
   end
 end

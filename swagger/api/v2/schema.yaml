@@ -4,6 +4,235 @@ info:
   title: API V2
   version: v2
 paths:
+  "/api/v2/measurements":
+    get:
+      summary: List measurements
+      tags:
+      - Measurements
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        description: 'Bearer JWT token. Example: Bearer eyJ...'
+        schema:
+          type: string
+      - name: apikey
+        in: query
+        required: false
+        description: API key alternative authentication
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: q
+        in: query
+        style: deepObject
+        explode: true
+        required: false
+        description: 'Ransack filters and sorting. Example: q[id_eq]=1&q[processed_eq]=true&q[s]=created_at
+          desc'
+        schema:
+          type: object
+          properties:
+            id_eq:
+              type: integer
+              example: 1
+            user_id_eq:
+              type: integer
+              example: 10
+            code_eq:
+              type: string
+              example: ABC123
+            code_cont:
+              type: string
+              example: ABC
+            approved_eq:
+              type: boolean
+              example: true
+            processed_eq:
+              type: boolean
+              example: true
+            c19_host_eq:
+              type: boolean
+              example: false
+            created_at_gteq:
+              type: string
+              format: date-time
+              example: '2026-03-01T00:00:00Z'
+            created_at_lteq:
+              type: string
+              format: date-time
+              example: '2026-03-31T23:59:59Z'
+            s:
+              type: string
+              example: created_at desc
+              enum:
+              - created_at desc
+              - created_at asc
+      responses:
+        '200':
+          description: measurements returned with apikey
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/measurements_index_response"
+        '401':
+          description: unauthorized
+    post:
+      summary: Create measurement
+      tags:
+      - Measurements
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        description: Bearer JWT token
+        schema:
+          type: string
+      - name: apikey
+        in: query
+        required: false
+        description: API key alternative authentication
+        schema:
+          type: string
+      responses:
+        '201':
+          description: measurement created with apikey
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                data_file:
+                  type: string
+                  format: binary
+                code:
+                  type: string
+              required:
+              - data_file
+  "/api/v2/measurements/{id}":
+    get:
+      summary: Show measurement
+      tags:
+      - Measurements
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: apikey
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: measurement found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/measurement"
+    patch:
+      summary: Update measurement client fields
+      tags:
+      - Measurements
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: apikey
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: measurement updated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                measurement:
+                  type: object
+                  properties:
+                    data_window_start:
+                      type: string
+                      format: date-time
+                    data_window_end:
+                      type: string
+                      format: date-time
+              required:
+              - measurement
+  "/api/v2/measurements/{id}/review":
+    patch:
+      summary: Review measurement admin fields
+      tags:
+      - Measurements
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: apikey
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: measurement reviewed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                measurement:
+                  type: object
+                  properties:
+                    processed:
+                      type: boolean
+                    c19_probability:
+                      type: number
+                      format: float
+                    spi_score:
+                      type: number
+                      format: float
+                    asdi_score:
+                      type: number
+                      format: float
+              required:
+              - measurement
   "/api/v2/login":
     post:
       summary: Login
@@ -89,3 +318,80 @@ components:
       type: apiKey
       name: apikey
       in: query
+  schemas:
+    measurement:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+          nullable: true
+        code:
+          type: string
+          nullable: true
+        approved:
+          type: boolean
+          nullable: true
+        processed:
+          type: boolean
+          nullable: true
+        c19_host:
+          type: boolean
+          nullable: true
+        c19_probability:
+          type: integer
+          nullable: true
+        spi_score:
+          type: integer
+          nullable: true
+        asdi_score:
+          type: integer
+          nullable: true
+        data_window_start:
+          type: number
+          format: float
+          nullable: true
+        data_window_end:
+          type: number
+          format: float
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        data_parsed:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+              format: float
+      required:
+      - id
+      - created_at
+      - updated_at
+    measurements_index_response:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            "$ref": "#/components/schemas/measurement"
+        meta:
+          type: object
+          properties:
+            limit_value:
+              type: integer
+            total_pages:
+              type: integer
+            current_page:
+              type: integer
+            next_page:
+              type: integer
+              nullable: true
+      required:
+      - data
+      - meta
