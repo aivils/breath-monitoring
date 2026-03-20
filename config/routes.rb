@@ -51,6 +51,7 @@ Rails.application.routes.draw do
       resource :profile, only: [:show, :update], controller: 'users/profiles' do
         patch :presence, on: :member
       end
+      resource :realtime, only: :show
     end
   end
 end

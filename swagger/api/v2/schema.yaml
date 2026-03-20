@@ -233,6 +233,56 @@ paths:
                       format: float
               required:
               - measurement
+  "/api/v2/realtime":
+    get:
+      summary: Get ActionCable connection info
+      tags:
+      - Realtime
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: Authorization
+        in: header
+        schema:
+          type: string
+        required: false
+        description: Bearer token
+      responses:
+        '200':
+          description: realtime connection info returned
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - cable_url
+                - identifier
+                properties:
+                  cable_url:
+                    type: string
+                    example: wss://example.com/cable
+                  identifier:
+                    type: object
+                    required:
+                    - channel
+                    - id
+                    properties:
+                      channel:
+                        type: string
+                        example: MeasurementChannel
+                      id:
+                        type: integer
+                        example: 42
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: This is not an authorized request.
   "/api/v2/profile":
     get:
       summary: Show current user profile
