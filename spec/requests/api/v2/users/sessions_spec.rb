@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Api::V2::Sessions', type: :request do
+RSpec.describe 'Api::V2::Users::Sessions', type: :request do
   let!(:user) do
     create(
       :user,

@@ -6,6 +6,10 @@ class User::ProfilePolicy < ApplicationPolicy
   end
 
   def update?
-    is_user? && record.user = user
+    show?
+  end
+
+  def presence?
+    show?
   end
 end

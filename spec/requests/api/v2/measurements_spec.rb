@@ -171,7 +171,6 @@ RSpec.describe 'Api::V2::Measurements', type: :request do
 
   describe 'PATCH /api/v2/measurements/:id/review' do
     it 'updates admin-editable fields via jwt' do
-      puts("=" * 20, " measurement1=#{measurement1.id}")
       patch "/api/v2/measurements/#{measurement1.id}/review",
             params: {
               measurement: {

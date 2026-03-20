@@ -16,5 +16,10 @@ FactoryBot.define do
         user.roles << Role.find_or_create_by!(name: Role::THERAPIST)
       end
     end
+    trait :with_profile do
+      after(:create) do |user|
+        create(:user_profile, user: user) unless user.profile
+      end
+    end
   end
 end

@@ -233,6 +233,93 @@ paths:
                       format: float
               required:
               - measurement
+  "/api/v2/profile":
+    get:
+      summary: Show current user profile
+      tags:
+      - Profiles
+      security:
+      - bearerAuth: []
+      - apiKeyAuth: []
+      parameters:
+      - name: apikey
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: profile found (jwt)
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/profile_response"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/unauthorized_error"
+    patch:
+      summary: Update current user profile
+      tags:
+      - Profiles
+      security:
+      - bearerAuth: []
+      - apiKeyAuth: []
+      parameters:
+      - name: apikey
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: updated (jwt)
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/profile_response"
+        '422':
+          description: invalid params
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ValidationErrors"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/unauthorized_error"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/profile_update"
+  "/api/v2/profile/presence":
+    patch:
+      summary: Update presence (last_seen_at)
+      tags:
+      - Profiles
+      security:
+      - bearerAuth: []
+      - apiKeyAuth: []
+      parameters:
+      - name: apikey
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ok (jwt)
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/unauthorized_error"
   "/api/v2/login":
     post:
       summary: Login
@@ -308,6 +395,36 @@ paths:
                     type: string
                 required:
                 - message
+  "/api/v2/password":
+    post:
+      summary: Password reset is unavailable
+      tags:
+      - Users
+      parameters: []
+      responses:
+        '501':
+          description: not implemented
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                required:
+                - error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      format: email
 components:
   securitySchemes:
     bearerAuth:
@@ -395,3 +512,104 @@ components:
       required:
       - data
       - meta
+    ValidationErrors:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: string
+      required:
+      - errors
+    PasswordResetRequest:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            email:
+              type: string
+              format: email
+          required:
+          - email
+      required:
+      - user
+    PasswordResetSuccess:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    user_profile:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        code:
+          type: string
+          nullable: true
+        display_time:
+          type: integer
+          enum:
+          - 30
+          - 60
+          - 120
+        record_mode:
+          type: string
+          enum:
+          - default
+          - limited_120sec
+        voice_control:
+          type: boolean
+        frames_per_second:
+          type: string
+          enum:
+          - '15'
+          - '30'
+          - '60'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - user_id
+      - display_time
+      - record_mode
+      - voice_control
+      - frames_per_second
+      - created_at
+      - updated_at
+    profile_response:
+      type: object
+      properties:
+        user/profile:
+          "$ref": "#/components/schemas/user_profile"
+      required:
+      - user/profile
+    profile_update:
+      type: object
+      properties:
+        profile:
+          type: object
+          properties:
+            code:
+              type: string
+              nullable: true
+          required:
+          - code
+      required:
+      - profile
+    unauthorized_error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: This is not an authorized request.
+      required:
+      - error

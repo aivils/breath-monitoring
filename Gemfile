@@ -20,6 +20,7 @@ gem 'dotenv-rails'
 gem 'kaminari'
 gem 'rswag-api'
 gem 'rswag-ui'
+gem 'active_model_serializers', '~> 0.10.0'
 
 gem 'foreman', '0.90.0', require: false
 

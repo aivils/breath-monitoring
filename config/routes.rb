@@ -39,13 +39,17 @@ Rails.application.routes.draw do
                    sign_out: 'logout'
                  },
                  controllers: {
-                   sessions: 'api/v2/sessions'
+                   sessions: 'api/v2/users/sessions',
+                   passwords: 'api/v2/users/passwords'
                  }
 
       resources :measurements, only: [:index, :show, :create, :update] do
         member do
           patch :review
         end
+      end
+      resource :profile, only: [:show, :update], controller: 'users/profiles' do
+        patch :presence, on: :member
       end
     end
   end
