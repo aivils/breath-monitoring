@@ -445,6 +445,81 @@ paths:
                     type: string
                 required:
                 - message
+  "/api/v2/users/{id}/profile":
+    get:
+      summary: Show user profile
+      tags:
+      - Users
+      security:
+      - apiKeyAuth: []
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: apikey
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: profile found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/api_v2_user_profile_response"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/unauthorized_error"
+  "/api/v2/users/{id}/update_profile":
+    patch:
+      summary: Update user profile
+      tags:
+      - Users
+      security:
+      - apiKeyAuth: []
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: apikey
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: profile updated with trend upload
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/api_v2_user_profile_response"
+        '422':
+          description: invalid base64
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ValidationErrors"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/unauthorized_error"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/api_v2_user_profile_update"
   "/api/v2/password":
     post:
       summary: Password reset is unavailable
@@ -620,6 +695,10 @@ components:
           - '15'
           - '30'
           - '60'
+        trend_url:
+          type: string
+          nullable: true
+          format: uri
         created_at:
           type: string
           format: date-time
@@ -663,3 +742,49 @@ components:
           example: This is not an authorized request.
       required:
       - error
+    api_v2_user_profile_response:
+      type: object
+      properties:
+        user/profile:
+          "$ref": "#/components/schemas/user_profile"
+      required:
+      - user/profile
+    api_v2_user_profile_update:
+      type: object
+      properties:
+        profile:
+          type: object
+          properties:
+            code:
+              type: string
+              nullable: true
+            display_time:
+              type: integer
+              enum:
+              - 30
+              - 60
+              - 120
+            record_mode:
+              type: string
+              enum:
+              - default
+              - limited_120sec
+            voice_control:
+              type: boolean
+            frames_per_second:
+              type: string
+              enum:
+              - '15'
+              - '30'
+              - '60'
+            trend_base64:
+              type: string
+              nullable: true
+            trend_filename:
+              type: string
+              nullable: true
+            trend_content_type:
+              type: string
+              nullable: true
+      required:
+      - profile

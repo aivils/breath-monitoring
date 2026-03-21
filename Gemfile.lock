@@ -187,6 +187,9 @@ GEM
       activesupport (>= 7.0)
     i18n (1.14.8)
       concurrent-ruby (~> 1.0)
+    image_processing (1.14.0)
+      mini_magick (>= 4.9.5, < 6)
+      ruby-vips (>= 2.0.17, < 3)
     inherited_resources (1.14.0)
       actionpack (>= 6.0)
       has_scope (>= 0.6)
@@ -235,6 +238,8 @@ GEM
       net-pop
       net-smtp
     marcel (1.1.0)
+    mini_magick (5.3.1)
+      logger
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
     minitest (6.0.2)
@@ -365,6 +370,9 @@ GEM
     rswag-ui (2.17.0)
       actionpack (>= 5.2, < 8.2)
       railties (>= 5.2, < 8.2)
+    ruby-vips (2.3.0)
+      ffi (~> 1.12)
+      logger
     ruby2_keywords (0.0.5)
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)
@@ -440,6 +448,7 @@ DEPENDENCIES
   factory_bot_rails
   foreman (= 0.90.0)
   haml-rails (~> 2.0)
+  image_processing (~> 1.2)
   kaminari
   listen
   mysql2

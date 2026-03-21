@@ -10,6 +10,7 @@ module OpenapiSchemas
         record_mode: { type: :string, enum: %w[default limited_120sec] },
         voice_control: { type: :boolean },
         frames_per_second: { type: :string, enum: %w[15 30 60] },
+        trend_url: { type: :string, nullable: true, format: :uri },
         created_at: { type: :string, format: 'date-time' },
         updated_at: { type: :string, format: 'date-time' }
       },

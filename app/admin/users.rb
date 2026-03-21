@@ -28,9 +28,16 @@ ActiveAdmin.register User do
           f.has_many :profile, new_record: false do |pf|
             pf.input :id, as: :hidden
             pf.input :display_time, as: :select, collection: User::Profile::DISPLAY_TIMES, include_blank: false
-            pf.input :record_mode, as: :select, collection: User::Profile::RECORD_MODES, include_blank: false
+            pf.input :record_mode,
+              as: :select,
+              collection: User::Profile.record_modes.keys.map { |k| [k.humanize, k] },
+              include_blank: false
             pf.input :voice_control
-            pf.input :frames_per_second, as: :select, collection: User::Profile::FRAMES_PER_SECOND_MODES, include_blank: false
+            pf.input :frames_per_second,
+              as: :select,
+              collection: User::Profile.frames_per_seconds.keys.map { |k| [k.to_s.humanize, k] },
+              include_blank: false
+            pf.input :trend, as: :file
           end
         end
       end
@@ -62,6 +69,15 @@ ActiveAdmin.register User do
       row :frames_per_second do |user|
         user.profile.frames_per_second
       end
+      row :trend do |user|
+        if user.profile.trend.attached?
+          link_to url_for(user.profile.trend), target: "_blank", title: "Open full image" do
+            image_tag user.profile.trend.variant(resize_to_limit: [200, 200])
+          end
+        else
+          status_tag 'no image'
+        end
+      end
       row :roles
       row :patients
       row :doctors
@@ -77,5 +93,6 @@ ActiveAdmin.register User do
       :record_mode,
       :voice_control,
       :frames_per_second,
+      :trend,
     ]
 end

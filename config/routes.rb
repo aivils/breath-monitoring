@@ -52,6 +52,12 @@ Rails.application.routes.draw do
         patch :presence, on: :member
       end
       resource :realtime, only: :show
+      resources :users, only: [] do
+        member do
+          get :profile
+          patch :update_profile
+        end
+      end
     end
   end
 end

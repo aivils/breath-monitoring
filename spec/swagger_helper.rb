@@ -30,6 +30,7 @@ RSpec.configure do |config|
           .merge(OpenapiSchemas::PASSWORD_RESET)
           .merge(OpenapiSchemas::PROFILE)
           .merge(OpenapiSchemas::UNAUTHORIZED_ERROR)
+          .merge(OpenapiSchemas::API_V2_USERS)
       }
     }
   }
