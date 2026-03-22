@@ -14,14 +14,45 @@ module OpenapiSchemas
         profile: {
           type: :object,
           properties: {
-            code: { type: :string, nullable: true },
-            display_time: { type: :integer, enum: [30, 60, 120] },
-            record_mode: { type: :string, enum: %w[default limited_120sec] },
-            voice_control: { type: :boolean },
-            frames_per_second: { type: :string, enum: %w[15 30 60] },
-            trend_base64: { type: :string, nullable: true },
-            trend_filename: { type: :string, nullable: true },
-            trend_content_type: { type: :string, nullable: true }
+            code: {
+              type: :string,
+              nullable: true,
+              description: 'Code (alphanumeric with dashes)'
+            },
+            display_time: {
+              type: :integer,
+              enum: [30, 60, 120],
+              description: 'Duration in seconds for displaying measurements'
+            },
+            record_mode: {
+              type: :string,
+              enum: %w[default limited_120sec],
+              description: 'Recording mode configuration'
+            },
+            voice_control: {
+              type: :boolean,
+              description: 'Enable or disable voice control'
+            },
+            frames_per_second: {
+              type: :string,
+              enum: %w[15 30 60],
+              description: 'Video recording frame rate'
+            },
+            trend_base64: {
+              type: :string,
+              nullable: true,
+              description: 'Base64-encoded image file content'
+            },
+            trend_filename: {
+              type: :string,
+              nullable: true,
+              description: 'Original file name of the uploaded image'
+            },
+            trend_content_type: {
+              type: :string,
+              nullable: true,
+              description: 'MIME type of the uploaded image (e.g., image/png)'
+            }
           }
         }
       },
