@@ -40,7 +40,7 @@ module Api
       end
 
       def update_params
-        params.require(:profile).permit(
+        params.require('user/profile').permit(
           :code,
           :display_time,
           :record_mode,
@@ -54,7 +54,7 @@ module Api
       end
 
       def profile_params
-        params.require(:profile).permit(
+        params.require('user/profile').permit(
           :code,
           :display_time,
           :record_mode,

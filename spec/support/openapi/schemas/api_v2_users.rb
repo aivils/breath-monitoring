@@ -11,7 +11,7 @@ module OpenapiSchemas
     api_v2_user_profile_update: {
       type: :object,
       properties: {
-        profile: {
+        'user/profile': {
           type: :object,
           properties: {
             code: {
