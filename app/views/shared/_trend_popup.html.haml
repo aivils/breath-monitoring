@@ -1,0 +1,18 @@
+- if user_signed_in? && current_user.profile&.trend&.attached?
+
+  %a.f6.link.dib.white.dim.mr3.mr4-ns#trend-open{ href: "#" }
+    Trend
+
+  #trend-popup.fixed.top-0.left-0.w-100.h-100.bg-black-80.z-999{
+    style: "display:none;"
+  }
+    .w-100.h-100.bg-white.overflow-auto.relative
+
+      %a.trend-close.absolute.top-1.right-2.right-1-ns.no-underline.z-2.br-100.bg-white.flex.items-center.justify-center.shadow-3{
+        href: "#",
+      }
+        %span.f3.dark-gray.lh-solid
+          &times;
+
+      .pa4
+        = image_tag current_user.profile.trend, class: "db trend-image"

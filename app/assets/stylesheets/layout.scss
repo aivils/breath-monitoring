@@ -62,3 +62,18 @@
   margin-left: 20px;
   margin-right: 20px;
 }
+
+#trend-popup {
+  overflow: auto;
+}
+
+#trend-popup .trend-close {
+  width: 40px;
+  height: 40px;
+}
+
+#trend-popup .trend-image {
+  max-width: none;
+  height: auto;
+  display: block;
+}

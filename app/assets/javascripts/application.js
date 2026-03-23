@@ -7,3 +7,4 @@
 //= require video
 //= require breath_monit
 //= require user_graph
+//= require trend_popup
