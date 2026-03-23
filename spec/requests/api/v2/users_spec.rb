@@ -23,7 +23,7 @@ RSpec.describe "Api::V2::UsersController", type: :request do
         patch "/api/v2/users/#{user.id}/update_profile",
               params: {
                 apikey: user.apikey,
-                profile: {
+                "user/profile": {
                   code: "new-code",
                   record_mode: "default",
                   frames_per_second: 30
@@ -42,7 +42,7 @@ RSpec.describe "Api::V2::UsersController", type: :request do
         patch "/api/v2/users/#{user.id}/update_profile",
               params: {
                 apikey: user.apikey,
-                profile: {
+                "user/profile": {
                   trend_filename: "trend.png",
                   trend_content_type: "image/png",
                   trend_base64: base64_png
@@ -62,7 +62,7 @@ RSpec.describe "Api::V2::UsersController", type: :request do
         patch "/api/v2/users/#{user.id}/update_profile",
               params: {
                 apikey: user.apikey,
-                profile: {
+                "user/profile": {
                   trend_filename: "trend.png",
                   trend_content_type: "image/png",
                   trend_base64: "not-valid-base64!!!"
@@ -77,7 +77,7 @@ RSpec.describe "Api::V2::UsersController", type: :request do
         patch "/api/v2/users/#{user.id}/update_profile",
               params: {
                 apikey: user.apikey,
-                profile: {
+                "user/profile": {
                   trend_filename: "trend.txt",
                   trend_content_type: "text/plain",
                   trend_base64: Base64.strict_encode64("hello")
@@ -93,7 +93,7 @@ RSpec.describe "Api::V2::UsersController", type: :request do
       it "returns unauthorized" do
         patch "/api/v2/users/#{user.id}/update_profile",
               params: {
-                profile: {
+                "user/profile": {
                   code: "new-code"
                 }
               }.to_json,

@@ -53,7 +53,7 @@ RSpec.describe 'API V2 Users', type: :request do
         let(:apikey) { user.apikey }
         let(:params) do
           {
-            profile: {
+            "user/profile": {
               code: 'new-code',
               display_time: 60,
               record_mode: 'default',
@@ -75,7 +75,7 @@ RSpec.describe 'API V2 Users', type: :request do
         let(:apikey) { user.apikey }
         let(:params) do
           {
-            profile: {
+            "user/profile": {
               trend_filename: 'trend.png',
               trend_content_type: 'image/png',
               trend_base64: Base64.strict_encode64(
@@ -97,7 +97,7 @@ RSpec.describe 'API V2 Users', type: :request do
         let(:apikey) { user.apikey }
         let(:params) do
           {
-            profile: {
+            "user/profile": {
               trend_filename: 'trend.png',
               trend_content_type: 'image/png',
               trend_base64: 'not-valid-base64!!!'
@@ -116,7 +116,7 @@ RSpec.describe 'API V2 Users', type: :request do
         let(:id) { user.id }
         let(:params) do
           {
-            profile: {
+            "user/profile": {
               code: 'new-code'
             }
           }
