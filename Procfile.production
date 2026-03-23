@@ -1,1 +1,1 @@
-web: /usr/local/rvm/bin/rvm 2.7.7 do bundle exec puma
+web: /usr/local/rvm/bin/rvm 3.2.9 do bundle exec puma
