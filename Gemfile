@@ -3,9 +3,9 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '3.2.9'
 
-gem 'rails', '~> 7.2', '>= 7.2.3'
+gem 'rails', '~> 8.1.0', '>= 8.1.0'
 gem 'mysql2'
-gem 'puma', '~> 6.4'
+gem 'puma', '~> 8.0'
 gem 'sass-rails', '>= 6'
 #gem 'webpacker', '~> 4.0'
 gem 'bootsnap', '>= 1.4.2', require: false
@@ -22,6 +22,7 @@ gem 'rswag-api'
 gem 'rswag-ui'
 gem 'active_model_serializers', '~> 0.10.0'
 gem 'image_processing', '~> 1.2'
+gem 'json', '< 3.0'
 
 gem 'foreman', '0.90.0', require: false
 
@@ -41,7 +42,7 @@ group :development do
   gem 'web-console', '>= 3.3.0'
   gem 'listen'
   gem 'spring', '~> 4.1'
-  gem 'byebug'
+  gem 'bundler-audit', require: false
 end
 
 group :test do

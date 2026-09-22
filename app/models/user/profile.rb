@@ -8,8 +8,8 @@ class User::Profile < ApplicationRecord
   validates :code, format: { with: /\A[-a-z0-9]+\Z/i, message: :code_is_invalid }, allow_nil: true
   validate :trend_format
 
-  enum record_mode: RECORD_MODES
-  enum frames_per_second: FRAMES_PER_SECOND_MODES
+  enum :record_mode, RECORD_MODES
+  enum :frames_per_second, FRAMES_PER_SECOND_MODES
 
   private
 
