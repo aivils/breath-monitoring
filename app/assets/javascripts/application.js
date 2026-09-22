@@ -8,3 +8,4 @@
 //= require breath_monit
 //= require user_graph
 //= require trend_popup
+//= require serviceworker_loader

@@ -60,4 +60,7 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  get "/manifest.json", to: "pwa#manifest", as: :pwa_manifest
+  get "/service-worker.js", to: "pwa#service_worker", as: :pwa_service_worker
 end
