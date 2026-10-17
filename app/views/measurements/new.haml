@@ -14,12 +14,14 @@
   const app = new App({
     savePath: '#{measurements_path}',
     recordMode: '#{current_user.profile.record_mode}',
+    capture: '#{current_user.profile.video_capture_mode}',
     voiceControl: #{current_user.profile.voice_control},
     framesPerSecond: #{current_user.profile.frames_per_second},
     recordLength: 120,
     recordDataWindowLength: 64,
     beepFilePath: '#{asset_path('beep.mp3')}',
     measurementsPath: '#{measurements_path}',
+    diagnostics: #{current_user.profile.diagnostics},
   });
   function main() {
     redom.mount(document.getElementById('video-container'), app);

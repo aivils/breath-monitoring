@@ -2,6 +2,11 @@ class User::Profile < ApplicationRecord
   DISPLAY_TIMES = [30, 60, 120]
   RECORD_MODES = { default: 0, limited_120sec: 1 }
   FRAMES_PER_SECOND_MODES = {"15": 15, "30": 30, "60": 60}
+  VIDEO_CAPTURE_MODES = {
+    request_animation_frame: 0,
+    request_video_frame_callback: 1
+  }.freeze
+
   belongs_to :user
   has_one_attached :trend
 
@@ -10,6 +15,7 @@ class User::Profile < ApplicationRecord
 
   enum :record_mode, RECORD_MODES
   enum :frames_per_second, FRAMES_PER_SECOND_MODES
+  enum :video_capture_mode, VIDEO_CAPTURE_MODES
 
   private
 

@@ -32,11 +32,29 @@ ActiveAdmin.register User do
               as: :select,
               collection: User::Profile.record_modes.keys.map { |k| [k.humanize, k] },
               include_blank: false
+            pf.input :video_capture_mode,
+              as: :select,
+              collection: User::Profile.video_capture_modes.keys.map { |k| [k.humanize, k] },
+              include_blank: false,
+              hint: simple_format(<<~TEXT)
+                Request animation frame (RAF) – synchronized with screen refresh; legacy.
+                Request video frame callback (RVFC) – synchronized with camera video frames; modern.
+              TEXT
             pf.input :voice_control
             pf.input :frames_per_second,
               as: :select,
               collection: User::Profile.frames_per_seconds.keys.map { |k| [k.to_s.humanize, k] },
-              include_blank: false
+              include_blank: false,
+              hint: simple_format(<<~TEXT)
+                This setting applies only to legacy RAF capture mode.
+                In RAF mode, it limits the measurement sampling rate.
+                In RVFC mode, every processed video frame is saved.
+              TEXT
+            pf.input :diagnostics,
+              hint: <<~TEXT
+                Enable diagnostics during video capture.
+                The diagnostics are output to the browser console after saving.
+              TEXT
             pf.input :trend, as: :file
           end
         end
@@ -63,11 +81,17 @@ ActiveAdmin.register User do
       row :record_mode do |user|
         user.profile.record_mode
       end
+      row :video_capture_mode do |user|
+        user.profile.video_capture_mode
+      end
       row :voice_control do |user|
         user.profile.voice_control
       end
       row :frames_per_second do |user|
         user.profile.frames_per_second
+      end
+      row :diagnostics do |user|
+        user.profile.diagnostics
       end
       row :trend do |user|
         if user.profile.trend.attached?
@@ -91,8 +115,10 @@ ActiveAdmin.register User do
       :id,
       :display_time,
       :record_mode,
+      :video_capture_mode,
       :voice_control,
       :frames_per_second,
+      :diagnostics,
       :trend,
     ]
 end

@@ -225,15 +225,18 @@ class VideoCap {
       this.elTapControl = el('.absolute.w-100.h-100', {style:{display:'none'}}),
       this.elGraph = el('canvas.absolute.self-start.w-100.h3.bg-black.o-70', {style:{display:'none'}}),
       //note: not hiding Overlay/Canvas as initial size/position goes for a toss then
-      this.elOverlayCanvas = el('canvas.absolute', {width: this.options.w, height: this.options.h}),
+      this.elOverlayCanvas = el('canvas.absolute', {width: this.options.overlay.w, height: this.options.overlay.h}),
       this.elOverlay = new Overlay({
         moveResizeEl: this.elOverlayCanvas,
-        x:this.options.x,
-        y:this.options.y,
-        w:this.options.w,
-        h:this.options.h,
+        x:this.options.overlay.x,
+        y:this.options.overlay.y,
+        w:this.options.overlay.w,
+        h:this.options.overlay.h,
         onMove: this.overlayMove,
         onResize: this.overlayResize}),
+      this.ctxOverlay = this.elOverlayCanvas.getContext('2d', {
+        willReadFrequently: true
+      }),
       this.topBar = el('.absolute.self-start.sans-serif.f5.pa1.bg-orange.white', {style:{display:'none'}},
         [this.elStatus = el('span.pointer.ba'),
          this.elPause = el('span.pointer.ba.ml2', {style:{display:'none'}}, 'Pause'),
@@ -258,8 +261,24 @@ class VideoCap {
     ]);
     this.firstVideoTime = null;
     this.lastVideoTime = 0;
-    this.lastFrameTime = 0;
-    this.frameInterval = Math.round(1000 / this.options.fps);
+    this.lastFrameTimeGraph = 0;
+    this.firstFrameStamp = null;
+    this.lastSampleTime = 0;
+    this.frameInterval = Math.round(1000 / this.options.framesPerSecond);
+    this.frameIntervalGraph = Math.round(1000 / this.options.framesPerSecondGraph);
+    this.useRvfc = (this.options.capture === 'request_video_frame_callback') &&
+      (typeof HTMLVideoElement !== 'undefined') &&
+      ('requestVideoFrameCallback' in HTMLVideoElement.prototype);
+
+    if ((this.options.capture === 'request_video_frame_callback') && !this.useRvfc) {
+      console.error('requestVideoFrameCallback requested but not supported by this browser; using requestAnimationFrame');
+    }
+
+    this.vfcID = null;
+    this.counterID = null;
+    this.diagnostics = [];
+    this.camFrames = [];
+    this.camSettings = null;
     this.data = [];
     this.fdata = [];
 
@@ -292,6 +311,13 @@ class VideoCap {
     //console.log('onVideoOpen');
     this.elVideo.style.display = 'block';
     this.elVideo.srcObject = stream;
+    try {
+      const track = stream.getVideoTracks()[0];
+      if (track && track.getSettings) {
+        this.camSettings = track.getSettings();
+        console.log('camera settings: ' + JSON.stringify(this.camSettings));
+      }
+    } catch (e) { /* diagnostics must never stop a reading */ }
     this.elVideo.play();
   }
   videoError = (err) => {
@@ -301,9 +327,13 @@ class VideoCap {
   selectVideoDevice = (evt) => {
     //console.log('selectVideoDevice', this.elSelectVideoDevice.value, evt);
     if (this.elSelectVideoDevice.value != 'Select Camera') {
+      const videoConstraints = {'deviceId': this.elSelectVideoDevice.value};
+      if (this.options.frameRate) { videoConstraints.frameRate = {ideal: this.options.frameRate}; }
+      if (this.options.videoWidth) { videoConstraints.width = {ideal: this.options.videoWidth}; }
+      if (this.options.videoHeight) { videoConstraints.height = {ideal: this.options.videoHeight}; }
       navigator.mediaDevices.getUserMedia({
           'audio':false,
-          'video':{'deviceId': this.elSelectVideoDevice.value}
+          'video':videoConstraints,
       }).then(this.videoOpen).catch(this.videoError);
       //no need for elSelectVideoDevice anymore
       this.elSelectVideoDevice.style.display = 'none';
@@ -342,8 +372,8 @@ class VideoCap {
     this.topBar.style.display = 'initial';
     this.elPause.style.display = 'initial';
     this.elOverlayOrientation.style.display = 'initial';
-    const offsetLeft = Math.floor(this.elVideo.clientWidth/2 - this.options.w/2);
-    const offsetTop = Math.floor(this.elVideo.clientHeight/2 - this.options.h/2);
+    const offsetLeft = Math.floor(this.elVideo.clientWidth/2 - this.options.overlay.w/2);
+    const offsetTop = Math.floor(this.elVideo.clientHeight/2 - this.options.overlay.h/2);
     //cant do this in mount as display is none
     this.setOverlayOffset(offsetLeft, offsetTop)
     //since canvas width/height are set style.width/height is not needed
@@ -358,16 +388,47 @@ class VideoCap {
     this.elSave.style.display = 'none';
     this.firstVideoTime = null;
     this.lastVideoTime = 0;
-    this.lastFrameTime = 0;
+    this.lastFrameTimeGraph = 0;
     this.fdata = [];
     this.data = [];
     this.elPause.textContent = this.modeLimited120sec ? 'Restart' : 'Pause';
-    //note: video.timeupdate is not deterministic - requestAnimationFrame is better
-    this.rafID = requestAnimationFrame(this.onFrame.bind(this));
+    this.diagnostics = [];
+    this.camFrames = [];
+    this.firstFrameStamp = null;
+    this.lastSampleTime = 0;
+    if (this.options.diagnostics && !this.useRvfc &&
+        (typeof HTMLVideoElement !== 'undefined') &&
+        ('requestVideoFrameCallback' in HTMLVideoElement.prototype)) {
+      // diagnostics only: count real camera frames beside the original capture path
+      this.counterID = this.elVideo.requestVideoFrameCallback(this.onCounterFrame);
+    }
+    if (this.useRvfc) {
+      // NEW (1_video_rvfc): one callback per new camera frame, with that frame's own times
+      this.vfcID = this.elVideo.requestVideoFrameCallback(this.onVideoFrame);
+    } else {
+      //note: video.timeupdate is not deterministic - requestAnimationFrame is better
+      this.rafID = requestAnimationFrame(this.onFrame.bind(this));
+    }
+  }
+  cancelCapture = () => {
+    if (this.rafID != null) {
+      cancelAnimationFrame(this.rafID);
+      this.rafID = null;
+    }
+
+    if (this.useRvfc && this.vfcID !== null) {
+      this.elVideo.cancelVideoFrameCallback(this.vfcID);
+      this.vfcID = null;
+    }
+
+    if (this.counterID !== null && this.elVideo.cancelVideoFrameCallback) {
+      this.elVideo.cancelVideoFrameCallback(this.counterID);
+      this.counterID = null;
+    }
   }
   videoPause = (evt) => {
     //this.elStatus.innerText = 'Paused.';
-    cancelAnimationFrame(this.rafID);
+    this.cancelCapture();
     this.elVideo.currentTime = 0;
     this.elPause.textContent = 'Start';
     if (this.options.voiceControl) {
@@ -381,7 +442,7 @@ class VideoCap {
   }
   videoEnded = (evt) => {
     //console.log('videoEnded');
-    cancelAnimationFrame(this.rafID);
+    this.cancelCapture();
     this.elSave.style.display = 'block';
   }
   saveClick = (evt) => {
@@ -396,6 +457,7 @@ class VideoCap {
   }
   handleSave = (saveOptions) => {
     //console.log('pndng.save');
+    this.diagnosticsSummary();
     if (this.fdata && this.fdata.length > 0) {
       /*saveToFile(this.fdata.join('\n'),
                  mkfname(Math.round(this.elVideo.currentTime), this.gsize+'-'),
@@ -413,7 +475,10 @@ class VideoCap {
             document.getElementById('video-container').style.display = 'none';
             document.getElementById('user-graph-container').style.display = 'block';
             new Audio(this.options.beepFilePath).play();
-            setTimeout(() => { window.location.href = this.options.measurementsPath }, 5000);
+
+            if (!this.options.diagnostics) {
+              setTimeout(() => { window.location.href = this.options.measurementsPath }, 5000);
+            }
           }
         } else {
           this.elError.style.display = 'block';
@@ -492,7 +557,7 @@ class VideoCap {
 
     //can graph only graph-width-pixels - so slice data
     let data = this.data.slice(-1*w);
-    //let data = this.data.slice(-10*this.options.fps); //10 fps worth of data
+    //let data = this.data.slice(-10*this.options.framesPerSecond); //10 fps worth of data
     const n = data.length;
     ctx.clearRect(0, 0, w, h);
     ctx.lineWidth = 2;
@@ -510,9 +575,9 @@ class VideoCap {
     const rgb2gs = [0.299, 0.587, 0.114];
     let gcount = 0;
     for (let i = 0; i < rgba.data.length; i += 4) {
-      let mono = (rgba.data[i] * rgb2gs[0]) + (rgba.data[i+1] * rgb2gs[1]) + (rgba.data[i+1] * rgb2gs[2]);
+      let mono = (rgba.data[i] * rgb2gs[0]) + (rgba.data[i+1] * rgb2gs[1]) + (rgba.data[i+2] * rgb2gs[2]);
       //convert mono into bw and count white pixels
-      if (mono < this.options.gmax) {
+      if (mono < this.options.grayscaleThreshold) {
         gcount++;
         mono = 0;
       } else {
@@ -524,61 +589,134 @@ class VideoCap {
     }
     return gcount;
   }
-  onFrame(timestamp) {
-    //console.log('onFrame', timestamp);
-    //if no processing is done - this would be about 60 fps
-    if ((this.elVideo.readyState === this.elVideo.HAVE_ENOUGH_DATA) &&
-        (!this.elVideo.paused) && (!this.elVideo.ended) &&
-        (this.elVideo.currentTime >= this.lastVideoTime)) {
 
-      /*if (this.lastFrameTime > 0) {
-        let duration = (this.elVideo.currentTime - this.lastFrameTime);
-        //this.elStatus.innerText = Math.round(1/duration) + ' fps '; //.toFixed(2)
-      }*/
-      this.lastVideoTime = this.elVideo.currentTime;
+  // RAF capture
+  onFrame = (timestamp) => {
+    this.processFrame(timestamp, null);
 
-      //do conversion as fast as possible - doing it @fps provides stuttering ux
-      const ctxOverlay = this.elOverlayCanvas.getContext('2d');
-      // Draw selected area of video to OffScreenCanvas
-      ctxOverlay.drawImage(this.elVideo,
-        this.overlayX / this.videoScaleX, this.overlayY / this.videoScaleY,
-        this.elOverlayCanvas.width / this.videoScaleX, this.elOverlayCanvas.height / this.videoScaleY,
-        0, 0,
-        this.elOverlayCanvas.width, this.elOverlayCanvas.height);
-
-      this.overlayState(ctxOverlay);
-      // get the imageData from OffScreenCanvas
-      const rgba = ctxOverlay.getImageData(0, 0, this.elOverlayCanvas.width, this.elOverlayCanvas.height);
-      const gcount = this.calculateGrayscale(rgba);
-
-      // draw modified Image on overlayCanvas
-      ctxOverlay.putImageData(rgba, 0, 0);
-
-      let now = new Date().getTime();
-      if (!this.firstVideoTime) {
-        this.firstVideoTime = now;
-      }
-      //fps is for graph updata only
-      if ((now - this.lastFrameTime) >= this.frameInterval) {
-        const normalized =  Math.round((1 - gcount/this.gsize) * 100000) / 100000;
-        this.lastFrameTime = now;
-        const elapsedTime = (now - this.firstVideoTime) / 1000 /* seconds */
-        this.fdata.push(elapsedTime + ' ' + normalized);
-        this.updateGraph(normalized); //% of overlaypixels
-        this.elStatus.innerText = hhmmss(Math.round(elapsedTime));
-        BreathMonit.send({t: elapsedTime, c: normalized});
-
-        if (this.modeLimited120sec && elapsedTime >= this.options.recordLength) {
-          this.elVideo.pause();
-          this.handleSave({});
-        }
-      }
-
-    //} else {
-      //console.log('skip', this.elVideo.readyState, this.elVideo.HAVE_ENOUGH_DATA, this.elVideo.paused, this.elVideo.ended, this.elVideo.currentTime, this.lastFrameTime);
+    if (!this.elVideo.paused && !this.elVideo.ended) {
+      this.rafID = requestAnimationFrame(this.onFrame);
+    } else {
+      this.rafID = null;
     }
-    //repeat until videoPause or videoEnded
-    this.rafID = requestAnimationFrame(this.onFrame.bind(this));
+  }
+
+  // RVFC capture
+  onVideoFrame = (now, metadata) => {
+    const t0 = performance.now();
+
+    const result = this.processFrame(now, metadata);
+
+    if (result !== null &&
+      this.options.diagnostics &&
+      this.diagnostics.length < 50000) {
+      this.diagnostics.push([
+        result.elapsedTime,
+        metadata.presentedFrames,
+        metadata.mediaTime,
+        metadata.captureTime,
+        Math.round((performance.now() - t0) * 100) / 100,
+        result.timeSource
+      ]);
+    }
+
+    if (!this.elVideo.paused && !this.elVideo.ended) {
+      this.vfcID = this.elVideo.requestVideoFrameCallback(this.onVideoFrame);
+    } else {
+      this.vfcID = null;
+    }
+  }
+
+  // Shared image processing and measurement
+  processFrame = (now, metadata = null) => {
+    if (this.elVideo.readyState < this.elVideo.HAVE_CURRENT_DATA ||
+        this.elVideo.paused || this.elVideo.ended) {
+      return null;
+    }
+
+    // RAF: retain the original video-time check
+    if (!metadata) {
+      if (this.elVideo.currentTime < this.lastVideoTime) {
+        return null;
+      }
+      this.lastVideoTime = this.elVideo.currentTime;
+    }
+
+
+    this.ctxOverlay.drawImage(
+      this.elVideo,
+      this.overlayX / this.videoScaleX,
+      this.overlayY / this.videoScaleY,
+      this.elOverlayCanvas.width / this.videoScaleX,
+      this.elOverlayCanvas.height / this.videoScaleY,
+      0, 0,
+      this.elOverlayCanvas.width,
+      this.elOverlayCanvas.height
+    );
+
+    this.overlayState(this.ctxOverlay);
+
+    const rgba = this.ctxOverlay.getImageData(
+      0, 0,
+      this.elOverlayCanvas.width,
+      this.elOverlayCanvas.height
+    );
+
+    const gcount = this.calculateGrayscale(rgba);
+
+    this.ctxOverlay.putImageData(rgba, 0, 0);
+
+    // Frame timestamp (milliseconds)
+    let stamp = now;
+    let timeSource = 'callbackTime';
+
+    if (metadata) {
+      if (typeof metadata.captureTime === 'number') {
+        stamp = metadata.captureTime;
+        timeSource = 'captureTime';
+      } else if (typeof metadata.mediaTime === 'number') {
+        stamp = metadata.mediaTime * 1000;
+        timeSource = 'mediaTime';
+      }
+    }
+
+    if (this.firstFrameStamp == null) {
+      this.firstFrameStamp = stamp;
+    }
+
+    const elapsedTime =
+      Math.round((stamp - this.firstFrameStamp) * 10) / 10000;
+
+    const normalized =
+      Math.round((1 - gcount / this.gsize) * 100000) / 100000;
+
+    // RAF: preserve original measurement throttling
+    // RVFC: save every processed frame
+    const shouldSave =
+      metadata !== null ||
+      (now - this.lastSampleTime >= this.frameInterval);
+
+    if (shouldSave) {
+      this.lastSampleTime = now;
+
+      this.fdata.push(elapsedTime + ' ' + normalized);
+      BreathMonit.send({t: elapsedTime, c: normalized});
+    }
+
+    // Update graph independently of measurement frequency
+    if (now - this.lastFrameTimeGraph >= this.frameIntervalGraph) {
+      this.lastFrameTimeGraph = now;
+      this.updateGraph(normalized);
+      this.elStatus.innerText = hhmmss(Math.round(elapsedTime));
+    }
+
+    if (this.modeLimited120sec &&
+        elapsedTime >= this.options.recordLength) {
+      this.elVideo.pause();
+      this.handleSave({});
+    }
+
+    return {elapsedTime, timeSource};
   }
 
   togglePause = (evt) => {
@@ -604,38 +742,95 @@ class VideoCap {
     this.elVideo.pause();
     this.elVideo.play();
   }
+
+  // diagnostics only, used with ?diag=1 and the ORIGINAL capture path.
+  // It counts how many new camera frames the browser really presented, without touching
+  // the readings, so the count can be compared with the number of samples taken.
+  onCounterFrame = (now, metadata) => {
+    if (this.elVideo.paused || this.elVideo.ended) {
+      this.counterID = null;
+      return;
+    }
+    this.counterID = this.elVideo.requestVideoFrameCallback(this.onCounterFrame);
+    if (this.camFrames.length < 50000) {
+      this.camFrames.push([now, metadata.presentedFrames, metadata.mediaTime, metadata.captureTime]);
+    }
+  }
+
+  // one line of numbers in the browser console when a reading is saved
+  // (only with ?diag=1). Also leaves the detail in window.rpaDiag and window.rpaCamFrames.
+  diagnosticsSummary = () => {
+    if (!this.options.diagnostics) { return; }
+    try {
+      const out = { mode: this.useRvfc ? 'rvfc' : 'raf', camera: this.camSettings,
+                    samples: this.fdata.length };
+      const d = this.diagnostics;
+      if (this.useRvfc && d.length > 2) {
+        const gaps = [];
+        let dropped = 0;
+        for (let i = 1; i < d.length; i++) {
+          gaps.push((d[i][0] - d[i-1][0]) * 1000);
+          if (d[i][1] != null && d[i-1][1] != null) {
+            dropped += Math.max(0, d[i][1] - d[i-1][1] - 1);
+          }
+        }
+        const sorted = gaps.slice().sort((a, b) => a - b);
+        const median = sorted[Math.floor(sorted.length / 2)];
+        const mean = gaps.reduce((s, g) => s + g, 0) / gaps.length;
+        out.timeSource = d[0][5];
+        out.medianGapMs = Math.round(median * 10) / 10;
+        out.meanGapMs = Math.round(mean * 10) / 10;
+        out.meanFps = Math.round(10000 / mean) / 10;
+        out.gapsOver1p5xMedian = gaps.filter((g) => g > 1.5 * median).length;
+        out.droppedByPresentedFrames = dropped;
+        window.rpaDiag = d;
+      }
+      const c = this.camFrames;
+      if (!this.useRvfc && c && c.length > 2) {
+        const seconds = (c[c.length-1][0] - c[0][0]) / 1000;
+        out.cameraFramesPresented = c.length;
+        out.cameraFramesPerSecond = Math.round(10 * c.length / seconds) / 10;
+        out.samplesPerSecond = Math.round(10 * this.fdata.length / seconds) / 10;
+        window.rpaCamFrames = c;
+      }
+      console.log('capture summary: ' + JSON.stringify(out));
+    } catch (e) { /* diagnostics must never stop a save */ }
+  }
+
 }
 
+const defaultOptions = {
+  overlay: {
+    x: 0,
+    y: 0,
+    w: 20,
+    h: 75,
+  },
+  grayscaleThreshold: 126,
+  framesPerSecond: 15,
+  framesPerSecondGraph: 10,
+  recordMode: 'limited_120sec',
+  recordLength: 120,
+  voiceControl: false,
+  savePath: '',
+  beepFilePath: '',
+  measurementsPath: '',
+  frameRate: 120,
+  videoWidth: 640,
+  videoHeight: 480,
+  capture: 'request_animation_frame',
+  diagnostics: false
+};
 
 class App {
-  constructor(options) {
+  constructor(options = {}) {
     if (navigator.mediaDevices /* && navigator.getUserMedia && window.MediaRecorder */) {
-
-      let urlParams = new URLSearchParams(window.location.search);
-      let x = parseInt(urlParams.get('x') || '0') || 0;
-      let y = parseInt(urlParams.get('y') || '0') || 0;
-      let w = parseInt(urlParams.get('w') || '20') || 20;
-      let h = parseInt(urlParams.get('h') || '75') || 75;
-      if (x < 0) { x = 0 };
-      if (y < 0) { y = 0 };
-      if (w <= 0) {
-        w = (h > 0) ? h : 0;
-      }
-      if (h <= 0) {
-        h = (w > 0) ? w : 0;
-      }
-      let fps = parseInt(options.framesPerSecond || '15') || 15;
-      let gmax = parseInt(urlParams.get('gmax') || '126') || 126;
-      gmax = ((gmax >= 0) && (gmax <= 255)) ? gmax : 126;
-
-      options.x = x;
-      options.y = y;
-      options.w = w;
-      options.h = h;
-      options.fps = fps;
-      options.gmax = gmax;
+      this.options = {
+        ...defaultOptions,
+        ...options
+      };
       this.el = el('#app.w-100.h-100.flex.justify-center.items-center',
-        this.videocap = new VideoCap(options)
+        this.videocap = new VideoCap(this.options)
       );
     } else {
       this.el = el('p.bg-yellow.w-100.h-100.flex.justify-center.items-center', 'Supported/Tested browsers are Google Chrome 79+ or iOS Safari');

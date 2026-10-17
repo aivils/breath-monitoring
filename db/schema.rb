@@ -10,15 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_03_21_085930) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_17_070333) do
   create_table "active_admin_comments", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
-    t.string "namespace"
-    t.text "body"
-    t.string "resource_type"
-    t.bigint "resource_id"
-    t.string "author_type"
     t.bigint "author_id"
+    t.string "author_type"
+    t.text "body"
     t.datetime "created_at", null: false
+    t.string "namespace"
+    t.bigint "resource_id"
+    t.string "resource_type"
     t.datetime "updated_at", null: false
     t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id"
     t.index ["namespace"], name: "index_active_admin_comments_on_namespace"
@@ -26,24 +26,24 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_21_085930) do
   end
 
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "record_type", null: false
-    t.bigint "record_id", null: false
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
   create_table "active_storage_blobs", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
-    t.string "key", null: false
-    t.string "filename", null: false
-    t.string "content_type"
-    t.text "metadata"
-    t.string "service_name", null: false
     t.bigint "byte_size", null: false
     t.string "checksum"
+    t.string "content_type"
     t.datetime "created_at", null: false
+    t.string "filename", null: false
+    t.string "key", null: false
+    t.text "metadata"
+    t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
@@ -54,36 +54,36 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_21_085930) do
   end
 
   create_table "doctor_patients", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.datetime "created_at", null: false
     t.bigint "doctor_id", null: false
     t.bigint "patient_id", null: false
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["doctor_id"], name: "index_doctor_patients_on_doctor_id"
     t.index ["patient_id"], name: "index_doctor_patients_on_patient_id"
   end
 
   create_table "measurements", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.text "data", size: :medium
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.boolean "approved"
-    t.boolean "processed"
-    t.string "code"
-    t.float "data_window_start"
-    t.float "data_window_end"
-    t.integer "c19_probability"
-    t.boolean "c19_host"
-    t.integer "spi_score"
     t.integer "asdi_score"
+    t.boolean "c19_host"
+    t.integer "c19_probability"
+    t.string "code"
+    t.datetime "created_at", null: false
+    t.text "data", size: :medium
+    t.float "data_window_end"
+    t.float "data_window_start"
+    t.boolean "processed"
+    t.integer "spi_score"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["approved"], name: "index_measurements_on_approved"
     t.index ["processed"], name: "index_measurements_on_processed"
     t.index ["user_id"], name: "index_measurements_on_user_id"
   end
 
   create_table "roles", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
-    t.string "name"
     t.datetime "created_at", null: false
+    t.string "name"
     t.datetime "updated_at", null: false
   end
 
@@ -95,43 +95,45 @@ ActiveRecord::Schema[7.2].define(version: 2026_03_21_085930) do
   end
 
   create_table "user_profiles", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.integer "display_time", default: 30
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.string "code"
-    t.integer "record_mode", default: 0
-    t.boolean "voice_control", default: false
+    t.datetime "created_at", null: false
+    t.boolean "diagnostics", default: false, null: false
+    t.integer "display_time", default: 30
     t.integer "frames_per_second", default: 15
+    t.integer "record_mode", default: 0
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.integer "video_capture_mode", default: 0, null: false
+    t.boolean "voice_control", default: false
     t.index ["user_id"], name: "index_user_profiles_on_user_id"
   end
 
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
-    t.string "email", default: "", null: false
-    t.string "encrypted_password", default: "", null: false
-    t.string "reset_password_token"
-    t.datetime "reset_password_sent_at", precision: nil
-    t.datetime "remember_created_at", precision: nil
-    t.integer "sign_in_count", default: 0, null: false
-    t.datetime "current_sign_in_at", precision: nil
-    t.datetime "last_sign_in_at", precision: nil
-    t.string "current_sign_in_ip"
-    t.string "last_sign_in_ip"
+    t.boolean "admin"
+    t.string "apikey"
+    t.datetime "confirmation_sent_at", precision: nil
     t.string "confirmation_token"
     t.datetime "confirmed_at", precision: nil
-    t.datetime "confirmation_sent_at", precision: nil
-    t.string "unconfirmed_email"
-    t.integer "failed_attempts", default: 0, null: false
-    t.string "unlock_token"
-    t.datetime "locked_at", precision: nil
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean "admin"
-    t.datetime "last_seen_at", precision: nil
+    t.datetime "current_sign_in_at", precision: nil
+    t.string "current_sign_in_ip"
     t.integer "doctors_count", default: 0
-    t.integer "patients_count", default: 0
-    t.string "apikey"
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.integer "failed_attempts", default: 0, null: false
     t.string "jti", null: false
+    t.datetime "last_seen_at", precision: nil
+    t.datetime "last_sign_in_at", precision: nil
+    t.string "last_sign_in_ip"
+    t.datetime "locked_at", precision: nil
+    t.integer "patients_count", default: 0
+    t.datetime "remember_created_at", precision: nil
+    t.datetime "reset_password_sent_at", precision: nil
+    t.string "reset_password_token"
+    t.integer "sign_in_count", default: 0, null: false
+    t.string "unconfirmed_email"
+    t.string "unlock_token"
+    t.datetime "updated_at", null: false
     t.index ["admin"], name: "index_users_on_admin"
     t.index ["apikey"], name: "index_users_on_apikey"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
